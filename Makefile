@@ -1,5 +1,6 @@
 default: remove
 	ln -s "$(PWD)/.config/fish/config.fish" ${HOME}/.config/fish
+	ln -s "$(PWD)/.config/fish/nvm.fish" ${HOME}/.config/fish/functions
 	ln -s "$(PWD)/.fonts" ${HOME}/.fonts
 	ln -s "$(PWD)/.gitconfig" ${HOME}/.gitconfig
 	ln -s "$(PWD)/.bashrc" ${HOME}/.bashrc
