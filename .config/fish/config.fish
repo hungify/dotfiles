@@ -1,13 +1,21 @@
 if status is-interactive
-    # Commands to run in interactive sessions can go here
 
 set -g -x fish_greeting '👋 @hungify'
 
+# Load node
+nvm use default
+clear
+
+# Starship Prompt
 starship init fish | source
 
 # bun
 set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
+
+#deno
+set --export DENO_INSTALL "$HOME/.deno"
+set --export PATH $DENO_INSTALL/bin $PATH
 
 # alias
 alias ls='ls --color=auto'
