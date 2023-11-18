@@ -1,0 +1,37 @@
+[includeIf "gitdir:~/"]
+path = ~/.gitconfig-personal
+exclude = ~/work/*
+
+[includeIf "gitdir:~/work/"]
+path = ~/work/.gitconfig-work
+
+[color]
+ui = true
+
+[push]
+autosetupremote = true
+default = current
+
+[filter "lfs"]
+required = true
+clean = git-lfs clean -- %f
+smudge = git-lfs smudge -- %f
+process = git-lfs filter-process
+
+[init]
+defaultBranch = main
+
+[branch]
+sort = -committerdate
+
+[pull]
+rebase = false
+prune = true
+pruneTags = true
+
+[fetch]
+prune = true
+pruneTags = true
+
+[gui]
+pruneDuringFetch = true
