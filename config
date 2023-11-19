@@ -1,4 +1,4 @@
-# For personal
+## For personal
 
 Host personal
     HostName github.com
@@ -7,7 +7,7 @@ Host personal
     PreferredAuthentications publickey
     IdentityFile ~/.ssh/personal
 
-# For work
+## For work
 
 Host work
     HostName github.com
