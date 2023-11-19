@@ -22,6 +22,7 @@ function setup_personal_git {
 		echo "Personal SSH key added: nmhungify@gmail.com"
 	fi
 
+	echo "Personal SSH key: "
 	cat ~/.ssh/personal.pub
 
 	if [[ -d ~/personal ]]; then
@@ -29,27 +30,9 @@ function setup_personal_git {
 	else
 		mkdir ~/personal
 	fi
-
-	if [[ -f ~/.gitconfig-personal ]]; then
-		echo "Personal gitconfig already exists"
-	else
-		cat >~/.gitconfig-personal <<EOF
-[user]
-	email = nmhungify@users.noreply.github.com
-	name = Hung Nguyen
-
-[github]
-	user = hungify
-
-[core]
-	sshCommand = "ssh -i ~/.ssh/personal"
-
-EOF
-	fi
 }
 
 function setup_work_git {
-
 	read -p "Do you want to setup work git? [y/n]: " is_setup_work_git
 
 	if [[ ! $is_setup_work_git == "y" ]]; then

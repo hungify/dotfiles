@@ -13,6 +13,7 @@ function unlink_files {
 	rm -rf ${HOME}/.zshrc
 	rm -rf ${HOME}/.czrc
 	rm -rf ${KEYBINDINGS}/DefaultKeyBinding.dict
+	rm -rf ${HOME}/.gitconfig-personal
 }
 
 function link_files {
@@ -22,6 +23,7 @@ function link_files {
 	ln -s $(pwd)/.zshrc ${HOME}/
 	ln -s $(pwd)/.czrc ${HOME}/
 	ln -s $(pwd)/.zsh ${HOME}/
+	ln -s $(pwd)/.gitconfig-personal ${HOME}/
 
 	if [ ! -d ${CONFIG} ]; then
 		mkdir ${CONFIG}
