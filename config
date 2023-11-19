@@ -1,6 +1,8 @@
+# Config Host
+
 ## For personal
 
-Host personal
+Host github.com
     HostName github.com
     User git
     IdentitiesOnly yes

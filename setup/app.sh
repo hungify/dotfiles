@@ -102,3 +102,4 @@ brew install zsh-autosuggestions
 sudo xattr -rd com.apple.quarantine /Applications/Mos.app
 sudo xattr -rd com.apple.quarantine /Applications/EVKey.app
 sudo xattr -rd com.apple.quarantine /Applications/Thorium.app
+sudo xattr -rd com.apple.quarantine /Applications/CleanShot\ X.app
