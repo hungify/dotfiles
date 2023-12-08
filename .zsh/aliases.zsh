@@ -19,6 +19,3 @@ alias top="top -o vsize"
 
 # pnpm
 alias pn="pnpm"
-
-#nvim
-alias vim="nvim"
