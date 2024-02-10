@@ -1,2 +1,2 @@
 prepare:
-	chmod u+x install.sh os.sh symlink.sh ./setup/*.sh
+	chmod u+x os.sh symlink.sh ./setup/*.sh
