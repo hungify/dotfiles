@@ -1,5 +1,14 @@
-# Upgrade brew
-brew upgrade
+#!/bin/bash
+
+# Install brew
+if [[ ! $(brew --version) ]]; then
+	echo "Installing brew"
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	echo "Brew installed"
+else
+	echo "Brew already installed, updating brew"
+	brew upgrade
+fi
 
 # Tap homebrew/cask-fonts
 brew tap homebrew/cask-fonts
@@ -22,8 +31,8 @@ brew install --cask mos
 # Install vs code
 brew install --cask visual-studio-code
 
-# Install thorium browser
-brew install --cask alex313031-thorium
+# Install Microsoft edge
+brew install --cask microsoft-edge
 
 # Install arc browser
 brew install --cask arc
@@ -37,8 +46,8 @@ brew install --cask skype
 # Install discord
 brew install --cask discord
 
-# Install docker
-brew install --cask docker
+# Install OrbStack
+brew install --cask orbstack
 
 # Install warp terminal
 brew install --cask warp
@@ -70,14 +79,11 @@ brew install starship
 # Install spotify
 brew install --cask spotify
 
-# Install exa
-brew install exa
-
 # Install bun
-if [[ ! $(bun --version) ]]; then
+if [[ ! $(bun -v) ]]; then
 	echo "Installing bun"
 	curl -fsSL https://bun.sh/install | bash
-	echo "bun installed"
+	echo "Bun installed"
 else
 	bun upgrade
 	echo "bun already installed"
@@ -98,8 +104,11 @@ brew install --cask aldente
 # Install zsh-autosuggestions
 brew install zsh-autosuggestions
 
-# Disable quarantine
-sudo xattr -rd com.apple.quarantine /Applications/Mos.app
-sudo xattr -rd com.apple.quarantine /Applications/EVKey.app
-sudo xattr -rd com.apple.quarantine /Applications/Thorium.app
-sudo xattr -rd com.apple.quarantine /Applications/CleanShot\ X.app
+# Install rust
+if [[ ! $(rustc --version) ]]; then
+    echo "Installing rust"
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    echo "Rust installed"
+else
+    echo "Rust already installed"
+fi
