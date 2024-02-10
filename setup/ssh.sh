@@ -59,6 +59,7 @@ function setup_work_git {
 	local email
 	local name
 	local is_overwrite="y"
+	local workspace
 
 	if [[ -f ~/.ssh/works ]]; then
 		echo "Work SSH key already exists"
@@ -66,31 +67,32 @@ function setup_work_git {
 	fi
 
 	if [[ $is_overwrite == "y" ]]; then
+		read -p "Enter your workspace: " workspace
 		read -p "Enter your work email: " email
 		read -p "Enter your work name: " name
 
 		if [[ $(ssh-add -l | grep -w $email) ]]; then
-			echo "Work SSH key already added: " $email
+			echo $workspace " with SSH key already added: " $email
 		else
-			ssh-keygen -t ed25519 -C $email -f ~/.ssh/work
+			ssh-keygen -t ed25519 -C $email -f ~/.ssh/$workspace
 			eval "$(ssh-agent -s)"
-			ssh-add ~/.ssh/work
+			ssh-add ~/.ssh/$workspace
 			echo "Work SSH key added: " $email
 		fi
 	fi
 
-	cat ~/.ssh/work.pub
+	cat ~/.ssh/$workspace.pub
 
-	if [[ -d ~/works ]]; then
-		echo "Work directory already exists"
+	if [[ -d ~/$workspace ]]; then
+		echo $workspace " directory already exists"
 	else
-		mkdir ~/work
+		mkdir ~/$workspace
 	fi
 
-	if [[ -f ~/work/.gitconfig-works ]]; then
-		echo "Work gitconfig already exists"
+	if [[ -f ~/work/.gitconfig-$workspace ]]; then
+		echo $workspace " gitconfig already exists"
 	else
-		cat >~/work/.gitconfig-work <<EOF
+		cat >~/$workspace/.gitconfig-$workspace <<EOF
 [user]
 	email = $email
 	name = Hung Nguyen
@@ -99,7 +101,7 @@ function setup_work_git {
 	user = $name
 
 [core]
-	sshCommand = "ssh -i ~/.ssh/work"
+	sshCommand = "ssh -i ~/.ssh/$workspace"
 EOF
 	fi
 }
