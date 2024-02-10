@@ -46,6 +46,20 @@ function setup_personal_git {
 
 EOF
 	fi
+
+	if [[ -f ~/.ssh/config-personal ]]; then
+		echo "Personal config already exists"
+	else
+		cat >~/.ssh/config-personal <<EOF
+## For personal
+Host github.com
+    HostName github.com
+    User git
+    IdentitiesOnly yes
+    PreferredAuthentications publickey
+    IdentityFile ~/.ssh/personal
+EOF
+	fi
 }
 
 function setup_work_git {
@@ -102,6 +116,21 @@ function setup_work_git {
 
 [core]
 	sshCommand = "ssh -i ~/.ssh/$workspace"
+EOF
+	fi
+
+
+	if [[ -f ~~/.ssh/config-$workspace ]]; then
+		echo "Personal config already exists"
+	else
+		cat >~/.ssh/config-$workspace <<EOF
+## For $workspace
+Host github.com
+    HostName github.com
+    User git
+    IdentitiesOnly yes
+    PreferredAuthentications publickey
+    IdentityFile ~/.ssh/$workspace
 EOF
 	fi
 }
