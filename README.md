@@ -8,27 +8,27 @@ Before doing anything, make sure you know what you are doing! The settings appli
 git clone https://github.com/hungify/dotfiles ~/dotfiles
 ```
 
-3.Install app and stuff.
+2.Install app and stuff.
 
 ```bash
 cd ~/dotfiles/setup
 ./app.sh
 ```
 
-4.SSH setup
+3.SSH setup
 
 ```bash
 cd ~/dotfiles/setup
 ./ssh.sh
 ```
 
-5.Setup macOS settings.
+4.Setup macOS settings.
 
 ```bash
 ./os.sh
 ```
 
-6.Setup symlinks for dotfiles.
+5.Setup symlinks for dotfiles.
 
 ```bash
 ./symlink.sh
