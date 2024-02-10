@@ -70,14 +70,17 @@ defaults write com.apple.Siri VoiceTriggerUserEnabled -bool false
 # Dock > Size:
 defaults write com.apple.dock tilesize -int 36
 
+# Dock > Position:
+defaults write com.apple.dock pinning -string end
+
 # Dock > Magnification
 defaults write com.apple.dock largesize -int 54
 
 # Dock > Magnification
 defaults write com.apple.dock magnification -bool true
 
-# Dock > Minimize windows using: Scale effect
-defaults write com.apple.dock mineffect -string "scale"
+# Dock > Minimize windows using: No Effect
+defaults write com.apple.dock mineffect -string suck;
 
 # Dock > Minimize windows into application icon
 defaults write com.apple.dock minimize-to-application -bool true
