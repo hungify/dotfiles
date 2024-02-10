@@ -1,147 +1,148 @@
 #!/bin/bash
 
+# Function to setup personal git
 function setup_personal_git {
+    read -p "Do you want to set up personal git? [y/n]: " is_setup_personal_git
 
-	read -p "Do you want to setup personal git? [y/n]: " is_setup_personal_git
+    if [[ $is_setup_personal_git != "y" ]]; then
+        return
+    fi
 
-	if [[ ! $is_setup_personal_git == "y" ]]; then
-		return
-	fi
+    local personal_key_path="$HOME/.ssh/personal"
+    local ssh_config_path="$HOME/.ssh/config-personal"
+    local git_config_path="$HOME/.gitconfig-personal"
+    local email="nmhungify@gmail.com"
+    local name="Hung Nguyen"
+    local github_user="hungify"
 
-	if [[ -f ~/.ssh/personal ]]; then
-		echo "Personal SSH key already exists"
-	else
-		ssh-keygen -t ed25519 -C "nmhungify@gmail.com" -f ~/.ssh/personal
-	fi
+    if [[ ! -f $personal_key_path ]]; then
+        ssh-keygen -t ed25519 -C "$email" -f $personal_key_path || { echo "Failed to generate personal SSH key"; return 1; }
+    fi
 
-	if [[ $(ssh-add -l | grep -w "hungify@gmail.com") ]]; then
-		echo "Personal SSH key already added"
-	else
-		eval "$(ssh-agent -s)"
-		ssh-add ~/.ssh/personal
-		echo "Personal SSH key added: nmhungify@gmail.com"
-	fi
+    if ! ssh-add -l | grep -q "$email"; then
+        eval "$(ssh-agent -s)"
+        ssh-add $personal_key_path || { echo "Failed to add personal SSH key"; return 1; }
+        echo "Personal SSH key added: $email"
+    else
+        echo "Personal SSH key already added"
+    fi
 
-	cat ~/.ssh/personal.pub
+    cat "$personal_key_path.pub"
 
-	if [[ -d ~/personal ]]; then
-		echo "Personal directory already exists"
-	else
-		mkdir ~/personal
-	fi
+    mkdir -p "$HOME/personal"
 
-	if [[ -f ~/.gitconfig-personal ]]; then
-		echo "Personal gitconfig already exists"
-	else
-		cat >~/.gitconfig-personal <<EOF
+    if [[ ! -f $git_config_path ]]; then
+        cat > "$git_config_path" <<EOF
 [user]
-	email = nmhungify@gmail.com
-	name = Hung Nguyen
+    email = $email
+    name = $name
 
 [github]
-	user = hungify
+    user = $github_user
 
 [core]
-	sshCommand = "ssh -i ~/.ssh/personal"
-
+    sshCommand = "ssh -i $personal_key_path"
 EOF
-	fi
+        echo "Personal gitconfig created"
+    else
+        echo "Personal gitconfig already exists"
+    fi
 
-	if [[ -f ~/.ssh/config-personal ]]; then
-		echo "Personal config already exists"
-	else
-		cat >~/.ssh/config-personal <<EOF
+    if [[ ! -f $ssh_config_path ]]; then
+        cat > "$ssh_config_path" <<EOF
 ## For personal
 Host github.com
     HostName github.com
     User git
     IdentitiesOnly yes
     PreferredAuthentications publickey
-    IdentityFile ~/.ssh/personal
+    IdentityFile $personal_key_path
 EOF
-	fi
+        echo "Personal SSH config created"
+    else
+        echo "Personal SSH config already exists"
+    fi
 }
 
+# Function to setup work git
 function setup_work_git {
+    read -p "Do you want to setup work git? [y/n]: " is_setup_work_git
 
-	read -p "Do you want to setup work git? [y/n]: " is_setup_work_git
+    if [[ $is_setup_work_git != "y" ]]; then
+        return
+    fi
 
-	if [[ ! $is_setup_work_git == "y" ]]; then
-		return
-	fi
+    local workspace
+    local email
+    local name
 
-	local email
-	local name
-	local is_overwrite="y"
-	local workspace
+    read -p "Enter your workspace: " workspace
 
-	if [[ -f ~/.ssh/works ]]; then
-		echo "Work SSH key already exists"
-		read -p "Do you want to overwrite your SSH key? [y/n]: " is_overwrite
-	fi
+    local work_key_path="$HOME/.ssh/$workspace"
+    local ssh_config_path="$HOME/.ssh/config-$workspace"
+    local git_config_path="$HOME/$workspace/.gitconfig-$workspace"
 
-	if [[ $is_overwrite == "y" ]]; then
-		read -p "Enter your workspace: " workspace
-		read -p "Enter your work email: " email
-		read -p "Enter your work name: " name
+    if [[ -f $work_key_path ]]; then
+        read -p "Work SSH key already exists. Do you want to overwrite it? [y/n]: " is_overwrite
+        [[ $is_overwrite != "y" ]] && return
+    fi
 
-		if [[ $(ssh-add -l | grep -w $email) ]]; then
-			echo $workspace " with SSH key already added: " $email
-		else
-			ssh-keygen -t ed25519 -C $email -f ~/.ssh/$workspace
-			eval "$(ssh-agent -s)"
-			ssh-add ~/.ssh/$workspace
-			echo "Work SSH key added: " $email
-		fi
-	fi
+    read -p "Enter your work email: " email
+    read -p "Enter your work name: " name
 
-	cat ~/.ssh/$workspace.pub
+    if ! ssh-add -l | grep -q "$email"; then
+        ssh-keygen -t ed25519 -C "$email" -f $work_key_path || { echo "Failed to generate work SSH key"; return 1; }
+        eval "$(ssh-agent -s)"
+        ssh-add $work_key_path || { echo "Failed to add work SSH key"; return 1; }
+        echo "Work SSH key added: $email"
+    else
+        echo "$workspace with SSH key already added: $email"
+    fi
 
-	if [[ -d ~/$workspace ]]; then
-		echo $workspace " directory already exists"
-	else
-		mkdir ~/$workspace
-	fi
+    cat "$work_key_path.pub"
 
-	if [[ -f ~/work/.gitconfig-$workspace ]]; then
-		echo $workspace " gitconfig already exists"
-	else
-		cat >~/$workspace/.gitconfig-$workspace <<EOF
+    mkdir -p "$HOME/$workspace"
+
+    if [[ ! -f $git_config_path ]]; then
+        cat > "$git_config_path" <<EOF
 [user]
-	email = $email
-	name = Hung Nguyen
+    email = $email
+    name = $name
 
 [github]
-	user = $name
+    user = $name
 
 [core]
-	sshCommand = "ssh -i ~/.ssh/$workspace"
+    sshCommand = "ssh -i $work_key_path"
 EOF
-	fi
+        echo "$workspace gitconfig created"
+    else
+        echo "$workspace gitconfig already exists"
+    fi
 
-
-	if [[ -f ~~/.ssh/config-$workspace ]]; then
-		echo "Personal config already exists"
-	else
-		cat >~/.ssh/config-$workspace <<EOF
+    if [[ ! -f $ssh_config_path ]]; then
+        cat > "$ssh_config_path" <<EOF
 ## For $workspace
-Host github.com
+Host $workspace
     HostName github.com
     User git
     IdentitiesOnly yes
     PreferredAuthentications publickey
-    IdentityFile ~/.ssh/$workspace
+    IdentityFile $work_key_path
 EOF
-	fi
+        echo "SSH config for $workspace created"
+    else
+        echo "SSH config for $workspace already exists"
+    fi
 }
 
+# Function to change file permissions
 function chmod_files {
-	echo "Chmoding files ..."
-	chmod 600 ~/.ssh/*
+    echo "Changing file permissions ..."
+    chmod 600 "$HOME/.ssh"/* || { echo "Failed to change file permissions"; return 1; }
 }
 
-chmod_files
-
-setup_personal_git
-
-setup_work_git
+# Main script starts here
+chmod_files || exit 1
+setup_personal_git || exit 1
+setup_work_git || exit 1
