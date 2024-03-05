@@ -73,8 +73,8 @@ brew install --cask vlc
 # Install rectangle
 brew install --cask rectangle
 
-# Install starship
-brew install starship
+# Install fish
+brew install fish
 
 # Install spotify
 brew install --cask spotify
@@ -89,8 +89,6 @@ else
 	echo "bun already installed"
 fi
 
-# Install czg
-brew install czg
 
 # Install pnpm
 brew install pnpm
@@ -98,7 +96,7 @@ brew install pnpm
 # Install lazygit
 brew install jesseduffield/lazygit/lazygit
 
-# Install al dente
+# Install aldente
 brew install --cask aldente
 
 # Install zsh-autosuggestions
