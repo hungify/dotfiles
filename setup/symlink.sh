@@ -8,7 +8,6 @@ function unlink_files {
 	echo "Unlinking old files ..."
 	rm -rf ${HOME}/.gitconfig
 	rm -rf ${SSH}/config
-	rm -rf ${CONFIG}/starship.toml
 	rm -rf ${HOME}/.zsh
 	rm -rf ${HOME}/.zshrc
 	rm -rf ${HOME}/.czrc
@@ -28,7 +27,6 @@ function link_files {
 	if [ ! -d ${CONFIG} ]; then
 		mkdir ${CONFIG}
 	fi
-	ln -s $(pwd)/.config/starship.toml ${CONFIG}/
 
 	if [ ! -d ${KEYBINDINGS} ]; then
 		mkdir ${KEYBINDINGS}
