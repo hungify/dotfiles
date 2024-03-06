@@ -73,9 +73,6 @@ brew install --cask vlc
 # Install rectangle
 brew install --cask rectangle
 
-# Install fish
-brew install fish
-
 # Install spotify
 brew install --cask spotify
 
@@ -89,7 +86,6 @@ else
 	echo "bun already installed"
 fi
 
-
 # Install pnpm
 brew install pnpm
 
@@ -98,9 +94,6 @@ brew install jesseduffield/lazygit/lazygit
 
 # Install aldente
 brew install --cask aldente
-
-# Install zsh-autosuggestions
-brew install zsh-autosuggestions
 
 # Install rust
 if [[ ! $(rustc --version) ]]; then
