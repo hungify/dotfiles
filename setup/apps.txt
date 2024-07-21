@@ -1,7 +1,6 @@
 firefox-developer-edition
 mos
 visual-studio-code
-microsoft-edge
 arc
 alt-tab
 skype
@@ -14,9 +13,8 @@ appcleaner
 postman
 vlc
 raycast
-rectangle
 spotify
-aldente
 font-monaspace
 pnpm
 jesseduffield/lazygit/lazygit
+microsoft-teams
