@@ -14,4 +14,4 @@ alias mkdir='mkdir -vp' # verbose mkdir that allows to pass a path
 alias top="top -o vsize"
 
 # pnpm
-alias pn="pnpm"
+alias p="pnpm"
