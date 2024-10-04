@@ -34,6 +34,12 @@ cd ~/dotfiles/setup
 ./symlink.sh
 ```
 
+6.Custom css vscode
+
+```bash
+./vscode.sh
+```
+
 ## MacOS Productivity
 
 - [Raycast](https://raycast.com/) - Spotlight replacement
