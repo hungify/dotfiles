@@ -10,7 +10,7 @@ local popup_width = 250
 
 local wifi_up = sbar.add("item", "widgets.wifi1", {
   position = "right",
-  padding_left = -5,
+  padding_left = -10,
   width = 0,
   icon = {
     padding_right = 0,
@@ -34,7 +34,7 @@ local wifi_up = sbar.add("item", "widgets.wifi1", {
 
 local wifi_down = sbar.add("item", "widgets.wifi2", {
   position = "right",
-  padding_left = -5,
+  padding_left = -10,
   icon = {
     padding_right = 0,
     font = {
@@ -171,18 +171,6 @@ wifi_up:subscribe("network_update", function(env)
       color = down_color
     }
   })
-end)
-
-wifi:subscribe({"wifi_change", "system_woke"}, function(env)
-  sbar.exec("ipconfig getifaddr en0", function(ip)
-    local connected = not (ip == "")
-    wifi:set({
-      icon = {
-        string = connected and icons.wifi.connected or icons.wifi.disconnected,
-        color = connected and colors.white or colors.red,
-      },
-    })
-  end)
 end)
 
 local function hide_details()
