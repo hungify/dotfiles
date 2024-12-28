@@ -1,3 +1,6 @@
+#!/bin/bash
+CONFIG=${HOME}/.config
+
 echo "Installing Dependencies"
 
 # Packages
@@ -19,5 +22,9 @@ curl -L https://github.com/kvndrsslr/sketchybar-app-font/releases/download/v2.0.
 (git clone https://github.com/FelixKratz/SbarLua.git /tmp/SbarLua && cd /tmp/SbarLua/ && make install && rm -rf /tmp/SbarLua/)
 
 echo "Apply sketchybar config"
-mv ./sketchybar $HOME/.config/sketchybar
+
+rm -rf ${CONFIG}/sketchybar
+
+ln -s $(pwd)/sketchybar ${CONFIG}/
+
 brew services restart sketchybar
