@@ -10,7 +10,7 @@ local cal = sbar.add("item", {
     padding_left = 8,
     font = {
       style = settings.font.style_map["Black"],
-      size = 12.0,
+      size = 10.0,
     },
   },
   label = {
@@ -24,11 +24,6 @@ local cal = sbar.add("item", {
   update_freq = 30,
   padding_left = 1,
   padding_right = 1,
-  background = {
-    color = colors.bg2,
-    border_color = colors.black,
-    border_width = 1
-  },
   click_script = "open -a 'Calendar'"
 })
 
@@ -36,7 +31,7 @@ local cal = sbar.add("item", {
 sbar.add("bracket", { cal.name }, {
   background = {
     color = colors.transparent,
-    height = 30,
+    height = 26,
     border_color = colors.grey,
   }
 })
