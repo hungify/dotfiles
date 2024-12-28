@@ -19,3 +19,6 @@ esac
 
 # bun completions
 [ -s "/Users/hungify/.bun/_bun" ] && source "/Users/hungify/.bun/_bun"
+
+# Added by Windsurf
+export PATH="/Users/hungify/.codeium/windsurf/bin:$PATH"

@@ -40,6 +40,12 @@ cd ~/dotfiles/setup
 ./vscode.sh
 ```
 
+7.Setup sketchybar
+
+```bash
+./sketchybar.sh
+```
+
 ## MacOS Productivity
 
 - [Raycast](https://raycast.com/) - Spotlight replacement
