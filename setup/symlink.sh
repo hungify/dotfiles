@@ -17,12 +17,12 @@ function unlink_files {
 
 function link_files {
 	echo "Linking new files ..."
-	ln -s $(pwd)/.gitconfig ${HOME}/
-	ln -s $(pwd)/.zshrc ${HOME}/
-	ln -s $(pwd)/.czrc ${HOME}/
-	ln -s $(pwd)/.zsh ${HOME}/
-	ln -s $(pwd)/.gitconfig-personal ${HOME}/
-	ln -s $(pwd)/config ${SSH}/
+	ln -s $(pwd)/../.gitconfig ${HOME}/
+	ln -s $(pwd)/../.zshrc ${HOME}/
+	ln -s $(pwd)/../.czrc ${HOME}/
+	ln -s $(pwd)/../.zsh ${HOME}/
+	ln -s $(pwd)/../.gitconfig-personal ${HOME}/
+	ln -s $(pwd)/../config ${SSH}/
 
 	if [ ! -d ${CONFIG} ]; then
 		mkdir ${CONFIG}
