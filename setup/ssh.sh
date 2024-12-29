@@ -136,13 +136,24 @@ EOF
     fi
 }
 
-# Function to change file permissions
 function chmod_files {
     echo "Changing file permissions ..."
     chmod 600 "$HOME/.ssh"/* || { echo "Failed to change file permissions"; return 1; }
 }
 
-# Main script starts here
+function check_if_shh_exists {
+    if [[ ! -d "$HOME/.ssh" ]]; then
+        echo "SSH directory does not exist. Creating ..."
+        mkdir "$HOME/.ssh" || { echo "Failed to create SSH directory"; return 1; }
+    fi
+}
+
+function ping_github {
+    ssh -T git@github.com
+}
+
+check_if_shh_exists || exit 1
 chmod_files || exit 1
 setup_personal_git || exit 1
 setup_work_git || exit 1
+ping_github
