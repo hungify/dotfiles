@@ -56,10 +56,4 @@ curl -L https://github.com/kvndrsslr/sketchybar-app-font/releases/download/v2.0.
 # SbarLua
 (git clone https://github.com/FelixKratz/SbarLua.git /tmp/SbarLua && cd /tmp/SbarLua/ && make install && rm -rf /tmp/SbarLua/)
 
-echo "Apply sketchybar config"
-
-rm -rf ${CONFIG}/sketchybar
-
-ln -s $(pwd)/../sketchybar ${CONFIG}/
-
 brew services restart sketchybar
