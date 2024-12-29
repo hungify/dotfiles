@@ -1,0 +1,75 @@
+{
+  "terminal": {
+    "cursor_shape": "bar"
+  },
+  "extend_comment_on_newline": false,
+  "theme": "Ayu Mirage",
+  "when_closing_with_no_tabs": "keep_window_open",
+  "buffer_font_family": "MonoLisa",
+  "ui_font_family": "MonoLisa",
+  "buffer_font_features": {
+    "calt": true,
+    "liga": true,
+    "dlig": true,
+    "ss01": true,
+    "ss02": true,
+    "ss03": true,
+    "ss04": true,
+    "ss05": true,
+    "ss06": true,
+    "ss07": true,
+    "ss08": true,
+    "ss09": true,
+    "ss10": true,
+    "ss11": true,
+    "ss12": true,
+    "ss13": true,
+    "ss14": true,
+    "ss15": true,
+    "ss16": true,
+    "ss17": true,
+    "ss18": true,
+    "ss19": true,
+    "ss20": true
+  },
+  "buffer_font_size": 14,
+  "autosave": "on_focus_change",
+  "file_scan_exclusions": [
+    "**/.git",
+    "**/.svn",
+    "**/.hg",
+    "**/CVS",
+    "**/.DS_Store",
+    "**/Thumbs.db",
+    "**/.classpath",
+    "**/.settings",
+    "**/.nuxt",
+    "**/.output",
+    "**/.pnpm",
+    "**/.vscode",
+    "**/.yarn",
+    "**/bower_components",
+    "**/dist/**",
+    "**/logs",
+    "**/node_modules",
+    "**/out/**",
+    "**/package-lock.json",
+    "**/pnpm-lock.yaml",
+    "**/tmp",
+    "**/yarn.lock"
+  ],
+  "language_overrides": {
+    "Rust": {
+      "show_inline_completions": true
+    },
+    "lsp": {
+      "rust-analyzer": {
+        "initialization_options": {
+          "checkOnSave": {
+            "command": "clippy"
+          }
+        }
+      }
+    }
+  }
+}

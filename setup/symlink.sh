@@ -13,6 +13,9 @@ function unlink_files {
 	rm -rf ${HOME}/.czrc
 	rm -rf ${KEYBINDINGS}/DefaultKeyBinding.dict
 	rm -rf ${HOME}/.gitconfig-personal
+	rm -rf ${CONFIG}/sketchybar
+	rm -rf ${CONFIG}/zed/settings.json
+	rm -rf ${CONFIG}/zed/keymap.json
 }
 
 function link_files {
@@ -27,12 +30,15 @@ function link_files {
 	if [ ! -d ${CONFIG} ]; then
 		mkdir ${CONFIG}
 	fi
+	ln -s $(pwd)/../.config/sketchybar ${CONFIG}/
+	ln -s $(pwd)/../.config/zed/settings.json ${CONFIG}/zed/
+	ln -s $(pwd)/../.config/zed/keymap.json ${CONFIG}/zed/
+	brew services restart sketchybar
 
 	if [ ! -d ${KEYBINDINGS} ]; then
 		mkdir ${KEYBINDINGS}
 	fi
 	ln -s $(pwd)/DefaultKeyBinding.dict ${KEYBINDINGS}/
-
 }
 
 unlink_files
