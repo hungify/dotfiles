@@ -19,3 +19,4 @@ pnpm
 jesseduffield/lazygit/lazygit
 microsoft-teams
 zed@preview
+oven-sh/bun/bun
