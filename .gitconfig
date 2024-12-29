@@ -1,9 +1,9 @@
 [includeIf "gitdir:~/"]
 path = ~/.gitconfig-personal
-exclude = ~/tenomad/*
+exclude = ~/work/*
 
-[includeIf "gitdir:~/tenomad/"]
-path = ~/tenomad/.gitconfig-tenomad
+[includeIf "gitdir:~/work/"]
+path = ~/work/.gitconfig-work
 
 [color]
 ui = true
