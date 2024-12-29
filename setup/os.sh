@@ -75,6 +75,9 @@ defaults write com.apple.dock tilesize -int 36
 # Dock > Position:
 defaults write com.apple.dock pinning -string end
 
+# Dock > Put the Dock on the right of the screen
+defaults write com.apple.dock "orientation" -string "right"
+
 # Dock > Magnification
 defaults write com.apple.dock largesize -int 54
 
@@ -82,7 +85,7 @@ defaults write com.apple.dock largesize -int 54
 defaults write com.apple.dock magnification -bool true
 
 # Dock > Minimize windows using: No Effect
-defaults write com.apple.dock mineffect -string suck;
+defaults write com.apple.dock mineffect -string suck
 
 # Dock > Minimize windows into application icon
 defaults write com.apple.dock minimize-to-application -bool true
@@ -138,6 +141,9 @@ defaults write -globalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
 # Tap to click
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
 
+# Dragging with three finger drag
+defaults write com.apple.AppleMultitouchTrackpad "TrackpadThreeFingerDrag" -bool "true"
+
 ################################################################################
 # Finder > Preferences
 ################################################################################
@@ -145,10 +151,10 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool
 # Show all filename extensions
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 
-# Show wraning before changing an extension
+# Show warning before changing an extension
 defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
 
-# Show wraning before removing from iCloud Drive
+# Show warning before removing from iCloud Drive
 defaults write com.apple.finder FXEnableRemoveFromICloudDriveWarning -bool false
 
 # Finder > View > As List
@@ -161,7 +167,13 @@ defaults write com.apple.finder ShowPathbar -bool true
 chflags nohidden ~/Library
 
 # Finder > View > Show Hidden Files
-defaults write com.apple.Finder AppleShowAllFiles true.
+defaults write com.apple.finder "AppleShowAllFiles" -bool "true"
+
+# Finder > View > Show All Extension
+defaults write NSGlobalDomain "AppleShowAllExtensions" -bool "true"
+
+# Finder > View > Show Path Bar
+defaults write com.apple.finder "ShowPathbar" -bool "true"
 
 # Finder > General > New Finder windows show
 defaults write com.apple.finder NewWindowTarget -string "PfHm"
