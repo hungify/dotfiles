@@ -1,13 +1,25 @@
 #!/bin/bash
 
-# Install brew
+# Check if Homebrew is installed
 if [[ ! $(brew --version) ]]; then
-	echo "Installing brew"
+	echo "Homebrew is not installed. Installing now..."
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-	echo "Brew installed"
+	echo "Homebrew has been successfully installed."
 else
-	echo "Brew already installed, updating brew"
-	brew upgrade
+	echo "Homebrew is already installed."
+
+	echo "Checking for Homebrew updates..."
+	brew update
+
+	current_version=$(brew --version | head -n 1 | awk '{print $2}')
+	latest_version=$(brew update-reset && brew --version | head -n 1 | awk '{print $2}')
+
+	if [[ "$current_version" != "$latest_version" ]]; then
+		echo "A new version of Homebrew is available. Upgrading from $current_version to $latest_version..."
+		brew upgrade
+	else
+		echo "Homebrew is already up to date ($current_version). No upgrade needed."
+	fi
 fi
 
 # Tap homebrew/cask-fonts
