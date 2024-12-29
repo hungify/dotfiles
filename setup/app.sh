@@ -22,9 +22,6 @@ else
 	fi
 fi
 
-# Tap homebrew/cask-fonts
-brew tap homebrew/cask-fonts
-
 # Install apps
 xargs brew install <apps.txt
 
