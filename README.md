@@ -34,13 +34,7 @@ cd ~/dotfiles/setup
 ./symlink.sh
 ```
 
-6.Custom css vscode
-
-```bash
-./vscode.sh
-```
-
-7.Setup sketchybar
+6.Setup sketchybar
 
 ```bash
 ./sketchybar.sh
