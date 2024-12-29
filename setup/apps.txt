@@ -1,4 +1,4 @@
-firefox-developer-edition
+firefox@developer-edition
 mos
 visual-studio-code
 arc
@@ -18,3 +18,4 @@ font-monaspace
 pnpm
 jesseduffield/lazygit/lazygit
 microsoft-teams
+zed@preview
