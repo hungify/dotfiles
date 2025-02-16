@@ -1,21 +1,16 @@
 [
   {
     "context": "Editor",
+    "use_key_equivalents": true,
     "bindings": {
+      "cmd-k": "editor::ShowCompletions",
       "cmd-shift-k": "editor::DeleteLine",
-      "cmd-i": "editor::ShowCompletions",
       "shift-pageup": "editor::SelectToBeginning",
       "shift-pagedown": "editor::SelectToEnd",
       "cmd-pageup": "editor::PageUp",
       "cmd-pagedown": "editor::PageDown",
       "cmd-\\": "pane::SplitRight",
       "cmd-delete": "editor::Delete"
-    }
-  },
-  {
-    "context": "ProjectPanel",
-    "bindings": {
-      "cmd-backspace": "project_panel::Delete"
     }
   }
 ]

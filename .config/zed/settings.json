@@ -1,4 +1,15 @@
 {
+  "assistant": {
+    "default_model": {
+      "provider": "copilot_chat",
+      "model": "gpt-4o"
+    },
+    "version": "2"
+  },
+  "features": {
+    "edit_prediction_provider": "zed"
+  },
+  "icon_theme": "Material Icon Theme",
   "terminal": {
     "cursor_shape": "bar"
   },
@@ -60,7 +71,7 @@
   ],
   "language_overrides": {
     "Rust": {
-      "show_inline_completions": true
+      "show_edit_predictions": true
     },
     "lsp": {
       "rust-analyzer": {
