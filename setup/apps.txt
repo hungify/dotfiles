@@ -8,7 +8,7 @@ orbstack
 warp
 evkey
 the-unarchiver
-appcleaner
+pearcleaner
 postman
 vlc
 raycast
