@@ -10,7 +10,9 @@
       "cmd-pageup": "editor::PageUp",
       "cmd-pagedown": "editor::PageDown",
       "cmd-\\": "pane::SplitRight",
-      "cmd-delete": "editor::Delete"
+      "cmd-delete": "editor::Delete",
+      "cmd-r": "editor::Rename",
+      "cmd-shift-i": "workspace::ToggleRightDock"
     }
   }
 ]

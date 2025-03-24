@@ -1,5 +1,15 @@
 {
+  "project_panel": {
+    "dock": "right"
+  },
+  "git_panel": {
+    "dock": "right"
+  },
+  "outline_panel": {
+    "dock": "right"
+  },
   "assistant": {
+    "dock": "left",
     "default_model": {
       "provider": "copilot_chat",
       "model": "gpt-4o"
