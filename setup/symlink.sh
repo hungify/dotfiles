@@ -10,7 +10,7 @@ function unlink_files {
 	rm -rf ${SSH}/config
 	rm -rf ${HOME}/.zsh
 	rm -rf ${HOME}/.zshrc
-	rm -rf ${HOME}/.czrc
+	rm -rf ${HOME}/.zshenv
 	rm -rf ${KEYBINDINGS}/DefaultKeyBinding.dict
 	rm -rf ${HOME}/.gitconfig-personal
 	rm -rf ${CONFIG}/sketchybar
@@ -21,8 +21,8 @@ function unlink_files {
 function link_files {
 	echo "Linking new files ..."
 	ln -s $(pwd)/../.gitconfig ${HOME}/
+	ln -s $(pwd)/../.zshenv ${HOME}/
 	ln -s $(pwd)/../.zshrc ${HOME}/
-	ln -s $(pwd)/../.czrc ${HOME}/
 	ln -s $(pwd)/../.zsh ${HOME}/
 	ln -s $(pwd)/../.gitconfig-personal ${HOME}/
 	ln -s $(pwd)/../config ${SSH}/
