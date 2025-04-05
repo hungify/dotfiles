@@ -1,25 +1,18 @@
 {
-  "project_panel": {
-    "dock": "right"
+  "autosave": "on_window_change",
+  "icon_theme": "Material Icon Theme",
+  "features": {
+    "edit_prediction_provider": "zed"
   },
-  "git_panel": {
-    "dock": "right"
-  },
-  "outline_panel": {
-    "dock": "right"
-  },
+  // Use Copilot Chat AI as default
   "assistant": {
     "dock": "left",
     "default_model": {
       "provider": "copilot_chat",
-      "model": "gpt-4o"
+      "model": "claude-3-7-sonnet"
     },
     "version": "2"
   },
-  "features": {
-    "edit_prediction_provider": "zed"
-  },
-  "icon_theme": "Material Icon Theme",
   "terminal": {
     "cursor_shape": "bar"
   },
@@ -54,7 +47,58 @@
     "ss20": true
   },
   "buffer_font_size": 14,
-  "autosave": "on_focus_change",
+  "ui_font_size": 17,
+  // Finder model width
+  "file_finder": {
+    "modal_max_width": "medium"
+  },
+  "scrollbar": {
+    "show": "auto"
+  },
+  "tabs": {
+    "show_diagnostics": "errors",
+    "file_icons": true,
+    "git_status": true
+  },
+  // Indentation, rainbow indentation
+  "indent_guides": {
+    "enabled": true,
+    "line_width": 1,
+    "active_line_width": 1,
+    "coloring": "indent_aware"
+  },
+  "gutter": {
+    "enabled": true
+  },
+  // LSP
+  "lsp": {
+    "tailwindcss-language-server": {
+      "settings": {
+        "classAttributes": ["class", "className", "ngClass", "styles"]
+      }
+    }
+  },
+  "languages": {
+    "TypeScript": {
+      "inlay_hints": {
+        "enabled": true,
+        "show_parameter_hints": false,
+        "show_other_hints": true,
+        "show_type_hints": true
+      }
+    },
+    "Python": {
+      "format_on_save": { "language_server": { "name": "ruff" } },
+      "formatter": { "language_server": { "name": "ruff" } },
+      "language_servers": ["pyright", "ruff"]
+    }
+  },
+  // File syntax highlighting
+  "file_types": {
+    "Dockerfile": ["Dockerfile", "Dockerfile.*"],
+    "JSON": ["json", "jsonc", "*.code-snippets"]
+  },
+  // File scan exclusions, hide on the file explorer and search
   "file_scan_exclusions": [
     "**/.git",
     "**/.svn",
@@ -64,33 +108,42 @@
     "**/Thumbs.db",
     "**/.classpath",
     "**/.settings",
-    "**/.nuxt",
-    "**/.output",
-    "**/.pnpm",
+    // above is default from Zed
+    "**/out",
+    "**/dist",
+    "**/.husky",
+    "**/.turbo",
+    "**/.vscode-test",
     "**/.vscode",
-    "**/.yarn",
-    "**/bower_components",
-    "**/dist/**",
-    "**/logs",
-    "**/node_modules",
-    "**/out/**",
-    "**/package-lock.json",
-    "**/pnpm-lock.yaml",
-    "**/tmp",
-    "**/yarn.lock"
+    "**/.next",
+    "**/.storybook",
+    "**/.tap",
+    "**/.nyc_output",
+    "**/report",
+    "**/node_modules"
   ],
-  "language_overrides": {
-    "Rust": {
-      "show_edit_predictions": true
-    },
-    "lsp": {
-      "rust-analyzer": {
-        "initialization_options": {
-          "checkOnSave": {
-            "command": "clippy"
-          }
-        }
-      }
-    }
+  // Turn off telemetry
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+  // Move all panel to the right
+  "git_panel": {
+    "dock": "right"
+  },
+  "project_panel": {
+    "button": true,
+    "dock": "right",
+    "git_status": true
+  },
+  "outline_panel": {
+    "dock": "left"
+  },
+  // Move some unnecessary panels to the left
+  "notification_panel": {
+    "dock": "left"
+  },
+  "chat_panel": {
+    "dock": "left"
   }
 }
