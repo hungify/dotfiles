@@ -6,8 +6,9 @@
     "edit_prediction_provider": "zed"
   },
   // Use Copilot Chat AI as default
-  "assistant": {
-    "default_profile": "write",
+  "agent": {
+    "always_allow_tool_actions": true,
+    "default_profile": "agent",
     "profiles": {
       "agent": {
         "name": "Agent",
@@ -16,14 +17,14 @@
           "terminal": true,
           "symbol_info": true,
           "rename": true,
-          "regex_search": true,
+          "grep": true,
           "read_file": true,
-          "path_search": true,
+          "find_path": true,
           "open": true,
           "now": true,
           "move_path": true,
           "list_directory": true,
-          "find_replace_file": true,
+          "edit_file": true,
           "fetch": true,
           "diagnostics": true,
           "delete_path": true,
@@ -40,8 +41,8 @@
     },
     "dock": "left",
     "default_model": {
-      "provider": "zed.dev",
-      "model": "claude-3-7-sonnet-latest"
+      "provider": "copilot_chat",
+      "model": "claude-sonnet-4"
     },
     "version": "2"
   },
@@ -173,7 +174,8 @@
   "project_panel": {
     "button": true,
     "dock": "right",
-    "git_status": true
+    "git_status": true,
+    "hide_root": true
   },
   "outline_panel": {
     "dock": "left"
