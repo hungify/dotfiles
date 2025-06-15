@@ -1,4 +1,4 @@
-firefox@developer-edition
+zen
 mos
 visual-studio-code
 arc
@@ -9,10 +9,8 @@ warp
 evkey
 the-unarchiver
 pearcleaner
-postman
+apidog
 vlc
-raycast
-spotify
 font-monaspace
 jesseduffield/lazygit/lazygit
 microsoft-teams
@@ -24,3 +22,5 @@ cap
 chatgpt
 anydesk
 zalo
+qbittorrent
+beekeeper-studio
