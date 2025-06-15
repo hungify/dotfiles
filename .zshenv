@@ -26,3 +26,12 @@ export PATH="$PATH:$HOME/Library/Python/3.9/bin"
 
 #gem
 export PATH=$HOME/.gem/bin:$PATH
+
+#Android
+export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
+
+# fvm
+export PATH="$HOME/fvm/default/bin:$PATH"
+
+# jdk
+export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
