@@ -13,7 +13,6 @@
       "cmd-delete": "editor::Delete",
       "cmd-shift-r": "editor::Rename",
       "cmd-l": "workspace::ToggleLeftDock",
-      "cmd-b": "workspace::ToggleRightDock",
       "cmd-r": null
     }
   },
@@ -22,8 +21,8 @@
     "use_key_equivalents": true,
     "bindings": {
       "cmd-?": null,
-      "cmd-b": null,
-      "cmd-l": "assistant::ToggleFocus",
+      "cmd-b": "workspace::ToggleRightDock",
+      "cmd-l": "agent::ToggleFocus",
       "cmd-shift-g": "git_panel::ToggleFocus"
     }
   }

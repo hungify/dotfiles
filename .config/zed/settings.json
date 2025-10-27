@@ -1,51 +1,18 @@
 {
+  "agent": {
+    "default_model": {
+      "provider": "copilot_chat",
+      "model": "gpt-5-mini"
+    },
+    "dock": "left",
+    "inline_assistant_model": {
+      "provider": "copilot_chat",
+      "model": "claude-sonnet-4"
+    }
+  },
   "autosave": "on_window_change",
   "format_on_save": "on",
   "icon_theme": "Material Icon Theme",
-  "features": {
-    "edit_prediction_provider": "zed"
-  },
-  // Use Copilot Chat AI as default
-  "agent": {
-    "always_allow_tool_actions": true,
-    "default_profile": "agent",
-    "profiles": {
-      "agent": {
-        "name": "Agent",
-        "tools": {
-          "thinking": true,
-          "terminal": true,
-          "symbol_info": true,
-          "rename": true,
-          "grep": true,
-          "read_file": true,
-          "find_path": true,
-          "open": true,
-          "now": true,
-          "move_path": true,
-          "list_directory": true,
-          "edit_file": true,
-          "fetch": true,
-          "diagnostics": true,
-          "delete_path": true,
-          "create_file": true,
-          "copy_path": true,
-          "code_actions": true,
-          "code_symbols": true,
-          "create_directory": true,
-          "batch_tool": true
-        },
-        "enable_all_context_servers": false,
-        "context_servers": {}
-      }
-    },
-    "dock": "left",
-    "default_model": {
-      "provider": "copilot_chat",
-      "model": "claude-sonnet-4"
-    },
-    "version": "2"
-  },
   "terminal": {
     "cursor_shape": "bar"
   },
@@ -85,9 +52,6 @@
   "file_finder": {
     "modal_max_width": "medium"
   },
-  "scrollbar": {
-    "show": "auto"
-  },
   "tabs": {
     "show_diagnostics": "errors",
     "file_icons": true,
@@ -101,7 +65,7 @@
     "coloring": "indent_aware"
   },
   "gutter": {
-    "enabled": true
+    "folds": true
   },
   // LSP
   "lsp": {
@@ -130,13 +94,9 @@
         "show_other_hints": true,
         "show_type_hints": true
       }
-    },
-    "Python": {
-      "format_on_save": { "language_server": { "name": "ruff" } },
-      "formatter": { "language_server": { "name": "ruff" } },
-      "language_servers": ["pyright", "ruff"]
     }
   },
+  // File syntax highlighting
   // File syntax highlighting
   "file_types": {
     "Dockerfile": ["Dockerfile", "Dockerfile.*"],
@@ -175,16 +135,17 @@
     "button": true,
     "dock": "right",
     "git_status": true,
-    "hide_root": true
+    "hide_root": true,
+    "sticky_scroll": true
   },
   "outline_panel": {
     "dock": "left"
   },
-  // Move some unnecessary panels to the left
-  "notification_panel": {
+  "collaboration_panel": {
     "dock": "left"
   },
-  "chat_panel": {
+  // Move some unnecessary panels to the left
+  "notification_panel": {
     "dock": "left"
   }
 }
