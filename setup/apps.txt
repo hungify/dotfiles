@@ -6,7 +6,6 @@ alt-tab
 discord
 orbstack
 warp
-evkey
 the-unarchiver
 pearcleaner
 apidog
@@ -16,11 +15,6 @@ jesseduffield/lazygit/lazygit
 microsoft-teams
 zed@preview
 oven-sh/bun/bun
-openmtp
 shottr
 cap
-chatgpt
-anydesk
 zalo
-qbittorrent
-beekeeper-studio
