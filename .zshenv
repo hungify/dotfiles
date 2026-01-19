@@ -35,3 +35,17 @@ export PATH="$HOME/fvm/default/bin:$PATH"
 
 # jdk
 export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
+
+# Android SDK
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools
+
+# bun completions
+[ -s "/Users/hungify/.bun/_bun" ] && source "/Users/hungify/.bun/_bun"
+export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
+
+# Added by Antigravity
+export PATH="/Users/hungify/.antigravity/antigravity/bin:$PATH"
+
+# Amp CLI
+export PATH="/Users/hungify/.amp/bin:$PATH"
