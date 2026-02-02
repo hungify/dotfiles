@@ -3,7 +3,7 @@ path = ~/.gitconfig-personal
 exclude = ~/workspaces/*
 
 [includeIf "gitdir:~/workspaces/"]
-path = ~/work/.gitconfig-work
+path = ~/workspaces/.gitconfig-work
 
 [color]
 ui = true

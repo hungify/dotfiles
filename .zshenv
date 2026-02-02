@@ -39,7 +39,7 @@ export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
 # Android SDK
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools
-
+export PATH="$PATH:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin"
 # bun completions
 [ -s "/Users/hungify/.bun/_bun" ] && source "/Users/hungify/.bun/_bun"
 export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"

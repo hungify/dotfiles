@@ -129,6 +129,7 @@
   },
   // Move all panel to the right
   "git_panel": {
+    "tree_view": true,
     "dock": "right"
   },
   "project_panel": {
