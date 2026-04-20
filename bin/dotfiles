@@ -1,0 +1,682 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+HOME_TREE="$REPO_ROOT/home"
+BREWFILE="$REPO_ROOT/packages/macos/Brewfile"
+APT_PACKAGES="$REPO_ROOT/packages/linux/ubuntu.txt"
+DNF_PACKAGES="$REPO_ROOT/packages/linux/fedora.txt"
+MACOS_CASKS="$REPO_ROOT/packages/macos/casks.txt"
+STATE_ROOT="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles"
+
+DRY_RUN=0
+FORCE=0
+YES=0
+VERBOSE=0
+
+usage() {
+  cat <<'EOF'
+Usage: dotfiles <command> [options]
+
+Commands:
+  bootstrap        install packages for the current OS, then link files
+  install          install packages for the current OS
+  list             print package sets for the current or requested OS
+  link             symlink files from ./home into $HOME
+  unlink           remove symlinks created by this repo from $HOME
+  doctor           show detected OS, tools, repo paths, and package status
+  macos            apply macOS defaults
+  ssh              run the interactive SSH/Git setup helper
+  help             show this help
+
+Options:
+  --dry-run        print actions without changing anything
+  --force          back up conflicting files and replace them
+  --yes            skip confirmation prompts where possible
+  --verbose        print detailed output where supported
+  --extras         install optional macOS GUI casks from packages/macos/casks.txt
+  --os <target>    target OS for the list command (ubuntu|fedora|macos|macos-casks|current)
+EOF
+}
+
+detect_package_manager() {
+  case "$(detect_os)" in
+    macos)
+      printf 'brew\n'
+      ;;
+    ubuntu)
+      printf 'apt\n'
+      ;;
+    fedora)
+      printf 'dnf\n'
+      ;;
+    *)
+      printf 'unknown\n'
+      ;;
+  esac
+}
+
+read_list_file() {
+  local file="$1"
+  local line
+
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    line="${line#"${line%%[![:space:]]*}"}"
+    line="${line%"${line##*[![:space:]]}"}"
+    [[ -z "$line" || "$line" == \#* ]] && continue
+    printf '%s\n' "$line"
+  done <"$file"
+}
+
+list_file_for_os() {
+  case "$1" in
+    ubuntu)
+      printf '%s\n' "$APT_PACKAGES"
+      ;;
+    fedora)
+      printf '%s\n' "$DNF_PACKAGES"
+      ;;
+    macos)
+      printf '%s\n' "$BREWFILE"
+      ;;
+    macos-casks)
+      printf '%s\n' "$MACOS_CASKS"
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+command_exists() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+print_check() {
+  printf '  - %s: %s\n' "$1" "$2"
+}
+
+package_installed() {
+  local os="$1"
+  local package="$2"
+
+  case "$os" in
+    ubuntu)
+      dpkg -s "$package" >/dev/null 2>&1
+      ;;
+    fedora)
+      rpm -q "$package" >/dev/null 2>&1
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+print_package_list() {
+  local os="$1"
+  local file label
+
+  file="$(list_file_for_os "$os")" || die "No package list for OS: $os"
+
+  case "$os" in
+    ubuntu)
+      label="Ubuntu packages"
+      ;;
+    fedora)
+      label="Fedora packages"
+      ;;
+    macos)
+      label="macOS Brewfile"
+      ;;
+    macos-casks)
+      label="macOS optional casks"
+      ;;
+  esac
+
+  printf '%s\n' "$label"
+  printf 'File: %s\n' "$file"
+
+  if [[ "$os" == "macos" ]]; then
+    sed -n '/^[[:space:]]*$/d; /^[[:space:]]*#/d; p' "$file"
+  else
+    read_list_file "$file"
+  fi
+}
+
+doctor_package_status() {
+  local os="$1"
+  local file package status
+  local -a missing=()
+
+  case "$os" in
+    ubuntu|fedora)
+      file="$(list_file_for_os "$os")" || return 0
+
+      if ! command_exists dpkg && [[ "$os" == "ubuntu" ]]; then
+        printf 'Package checks: unavailable (missing dpkg)\n'
+        return 0
+      fi
+
+      if ! command_exists rpm && [[ "$os" == "fedora" ]]; then
+        printf 'Package checks: unavailable (missing rpm)\n'
+        return 0
+      fi
+
+      while IFS= read -r package; do
+        if package_installed "$os" "$package"; then
+          status="ok"
+        else
+          status="missing"
+          missing+=("$package")
+        fi
+
+        if [[ "$VERBOSE" -eq 1 ]]; then
+          printf '  - %s: %s\n' "$package" "$status"
+        fi
+      done < <(read_list_file "$file")
+
+      if [[ "${#missing[@]}" -eq 0 ]]; then
+        printf 'Package checks: all declared %s packages are installed\n' "$os"
+      else
+        printf 'Package checks: missing %s\n' "${missing[*]}"
+      fi
+      ;;
+    *)
+      ;;
+  esac
+}
+
+doctor_link_status() {
+  local src rel dest current
+  local linked=0
+  local missing=0
+  local mismatched=0
+
+  while IFS= read -r -d '' src; do
+    [[ -d "$src" ]] && continue
+
+    rel="${src#$HOME_TREE/}"
+    should_link_path "$rel" || continue
+    dest="$HOME/$rel"
+
+    if [[ -L "$dest" ]]; then
+      current="$(readlink "$dest")"
+      if [[ "$current" == "$src" ]]; then
+        linked=$((linked + 1))
+        if [[ "$VERBOSE" -eq 1 ]]; then
+          print_check "$rel" "linked"
+        fi
+      else
+        mismatched=$((mismatched + 1))
+        if [[ "$VERBOSE" -eq 1 ]]; then
+          print_check "$rel" "symlink-mismatch"
+        fi
+      fi
+    elif [[ -e "$dest" ]]; then
+      mismatched=$((mismatched + 1))
+      if [[ "$VERBOSE" -eq 1 ]]; then
+        print_check "$rel" "exists-not-symlink"
+      fi
+    else
+      missing=$((missing + 1))
+      if [[ "$VERBOSE" -eq 1 ]]; then
+        print_check "$rel" "missing"
+      fi
+    fi
+  done < <(find "$HOME_TREE" -mindepth 1 -print0)
+
+  printf 'Link checks: %s linked, %s missing, %s mismatched\n' "$linked" "$missing" "$mismatched"
+}
+
+doctor_macos_status() {
+  local brew
+  local bundle_status
+  local tool
+
+  if xcode-select -p >/dev/null 2>&1; then
+    print_check "xcode-select" "ok"
+  else
+    print_check "xcode-select" "missing"
+  fi
+
+  if brew="$(brew_bin 2>/dev/null)"; then
+    print_check "homebrew" "$brew"
+
+    if "$brew" bundle check --file "$BREWFILE" >/dev/null 2>&1; then
+      bundle_status="ok"
+    else
+      bundle_status="missing packages"
+    fi
+    print_check "brew bundle" "$bundle_status"
+  else
+    print_check "homebrew" "missing"
+  fi
+
+  for tool in git zsh fzf direnv starship zoxide; do
+    if command_exists "$tool"; then
+      print_check "$tool" "$(command -v "$tool")"
+    else
+      print_check "$tool" "missing"
+    fi
+  done
+
+  doctor_link_status
+}
+
+log() {
+  printf '[dotfiles] %s\n' "$*"
+}
+
+warn() {
+  printf '[dotfiles] warning: %s\n' "$*" >&2
+}
+
+die() {
+  printf '[dotfiles] error: %s\n' "$*" >&2
+  exit 1
+}
+
+run() {
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    printf '+ %s\n' "$*"
+    return 0
+  fi
+
+  "$@"
+}
+
+detect_os() {
+  local kernel distro
+  kernel="$(uname -s)"
+
+  case "$kernel" in
+    Darwin)
+      printf 'macos\n'
+      return
+      ;;
+    Linux)
+      distro=""
+      if [[ -r /etc/os-release ]]; then
+        distro="$(. /etc/os-release && printf '%s' "${ID:-linux}")"
+      fi
+
+      case "$distro" in
+        ubuntu|debian)
+          printf 'ubuntu\n'
+          ;;
+        fedora)
+          printf 'fedora\n'
+          ;;
+        *)
+          printf 'linux\n'
+          ;;
+      esac
+      return
+      ;;
+  esac
+
+  printf 'unknown\n'
+}
+
+ensure_dir() {
+  run mkdir -p "$1"
+}
+
+ensure_parent_dir() {
+  local dest="$1"
+  local parent="$2"
+  local current=""
+  local part
+
+  [[ "$parent" == "$HOME" ]] && return 0
+
+  parent="${parent#$HOME/}"
+
+  IFS='/' read -r -a parts <<<"$parent"
+  for part in "${parts[@]}"; do
+    [[ -z "$part" ]] && continue
+    current="${current:+$current/}$part"
+
+    if [[ -d "$HOME/$current" ]]; then
+      continue
+    fi
+
+    if [[ -e "$HOME/$current" || -L "$HOME/$current" ]]; then
+      if [[ "$FORCE" -ne 1 ]]; then
+        warn "Skipping existing parent path (use --force): $HOME/$current"
+        return 1
+      fi
+
+      backup_path "$HOME/$current" "${current#$HOME/}"
+    fi
+  done
+
+  ensure_dir "$HOME/$parent"
+}
+
+brew_bin() {
+  [[ "$(detect_os)" == "macos" ]] || return 1
+
+  if command -v brew >/dev/null 2>&1; then
+    command -v brew
+    return
+  fi
+
+  local candidate
+  for candidate in \
+    /opt/homebrew/bin/brew \
+    /usr/local/bin/brew
+  do
+    [[ -x "$candidate" ]] && printf '%s\n' "$candidate" && return
+  done
+
+  return 1
+}
+
+install_system_packages() {
+  local os
+  local -a packages
+  os="$(detect_os)"
+
+  case "$os" in
+    ubuntu)
+      mapfile -t packages < <(read_list_file "$APT_PACKAGES")
+      log "Installing Ubuntu packages: ${packages[*]}"
+      run sudo apt-get update
+      run sudo apt-get install -y "${packages[@]}"
+      ;;
+    fedora)
+      mapfile -t packages < <(read_list_file "$DNF_PACKAGES")
+      log "Installing Fedora packages: ${packages[*]}"
+      run sudo dnf group install -y "Development Tools"
+      run sudo dnf install -y "${packages[@]}"
+      ;;
+    macos)
+      if ! xcode-select -p >/dev/null 2>&1; then
+        warn "Xcode Command Line Tools are not installed. Run: xcode-select --install"
+      else
+        log "Xcode Command Line Tools already installed"
+      fi
+      ;;
+    *)
+      warn "No system package bootstrap is defined for $(detect_os)"
+      ;;
+  esac
+}
+
+install_homebrew() {
+  [[ "$(detect_os)" == "macos" ]] || return 0
+
+  local brew
+  if brew="$(brew_bin)"; then
+    log "Homebrew already installed at $brew"
+    return 0
+  fi
+
+  log "Installing Homebrew in the default supported prefix"
+  if [[ "$YES" -eq 1 ]]; then
+    run env NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  else
+    run /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
+}
+
+install_brew_packages() {
+  [[ "$(detect_os)" == "macos" ]] || return 0
+
+  local brew
+  brew="$(brew_bin)" || die "Homebrew is not installed"
+
+  log "Installing Brewfile packages"
+  run "$brew" bundle --file "$BREWFILE"
+}
+
+install_optional_macos_casks() {
+  local brew cask
+
+  [[ "$(detect_os)" == "macos" ]] || return 0
+  [[ -r "$MACOS_CASKS" ]] || return 0
+
+  brew="$(brew_bin)" || die "Homebrew is not installed"
+
+  while IFS= read -r cask; do
+    [[ -z "$cask" || "$cask" == \#* ]] && continue
+    log "Installing optional cask: $cask"
+    if [[ "$DRY_RUN" -eq 1 ]]; then
+      printf '+ %s install --cask %s\n' "$brew" "$cask"
+      continue
+    fi
+
+    if ! "$brew" install --cask "$cask"; then
+      warn "Skipping failed cask: $cask"
+    fi
+  done <"$MACOS_CASKS"
+}
+
+should_link_path() {
+  local rel="$1"
+  local os
+
+  os="$(detect_os)"
+
+  case "$rel" in
+    Library/*)
+      [[ "$os" == "macos" ]] || return 1
+      ;;
+  esac
+
+  return 0
+}
+
+backup_path() {
+  local src="$1"
+  local rel="$2"
+  local backup_root="$STATE_ROOT/backups/$(date +%Y%m%d-%H%M%S)"
+  local backup_path="$backup_root/$rel"
+
+  ensure_dir "$(dirname "$backup_path")"
+  run mv "$src" "$backup_path"
+  [[ "$DRY_RUN" -eq 1 ]] || log "Backed up $src to $backup_path"
+}
+
+link_files() {
+  local src rel dest current
+
+  [[ -d "$HOME_TREE" ]] || die "Missing home tree: $HOME_TREE"
+
+  while IFS= read -r -d '' src; do
+    [[ -d "$src" ]] && continue
+
+    rel="${src#$HOME_TREE/}"
+    should_link_path "$rel" || continue
+    dest="$HOME/$rel"
+
+    ensure_parent_dir "$dest" "$(dirname "$dest")" || continue
+
+    if [[ -L "$dest" ]]; then
+      current="$(readlink "$dest")"
+      if [[ "$current" == "$src" ]]; then
+        log "Linked already: $dest"
+        continue
+      fi
+    fi
+
+    if [[ -e "$dest" || -L "$dest" ]]; then
+      if [[ "$FORCE" -ne 1 ]]; then
+        warn "Skipping existing path (use --force): $dest"
+        continue
+      fi
+
+      backup_path "$dest" "$rel"
+    fi
+
+    run ln -sfn "$src" "$dest"
+    [[ "$DRY_RUN" -eq 1 ]] || log "Linked $dest -> $src"
+  done < <(find "$HOME_TREE" -mindepth 1 -print0)
+}
+
+unlink_files() {
+  local src rel dest current
+
+  while IFS= read -r -d '' src; do
+    [[ -d "$src" ]] && continue
+
+    rel="${src#$HOME_TREE/}"
+    should_link_path "$rel" || continue
+    dest="$HOME/$rel"
+
+    [[ -L "$dest" ]] || continue
+    current="$(readlink "$dest")"
+    [[ "$current" == "$src" ]] || continue
+
+    run rm "$dest"
+    [[ "$DRY_RUN" -eq 1 ]] || log "Removed $dest"
+  done < <(find "$HOME_TREE" -mindepth 1 -print0)
+}
+
+doctor() {
+  local os
+  os="$(detect_os)"
+
+  cat <<EOF
+OS:          $os
+Packages:    $(detect_package_manager)
+Repo:        $REPO_ROOT
+Home tree:   $HOME_TREE
+State dir:   $STATE_ROOT
+Homebrew:    $(brew_bin 2>/dev/null || printf 'not found')
+Git:         $(command -v git 2>/dev/null || printf 'not found')
+Zsh:         $(command -v zsh 2>/dev/null || printf 'not found')
+EOF
+
+  case "$os" in
+    macos)
+      doctor_macos_status
+      ;;
+    *)
+      doctor_package_status "$os"
+      ;;
+  esac
+}
+
+list_packages() {
+  local target="${1:-$(detect_os)}"
+
+  case "$target" in
+    current)
+      target="$(detect_os)"
+      ;;
+  esac
+
+  print_package_list "$target"
+}
+
+run_macos_defaults() {
+  [[ "$(detect_os)" == "macos" ]] || die "macos command only works on macOS"
+  run "$REPO_ROOT/scripts/macos-defaults.sh"
+}
+
+run_ssh_setup() {
+  run "$REPO_ROOT/scripts/ssh-setup.sh"
+}
+
+bootstrap() {
+  local install_extras="${1:-0}"
+
+  install_system_packages
+  if [[ "$(detect_os)" == "macos" ]]; then
+    install_homebrew
+    install_brew_packages
+  fi
+
+  if [[ "$install_extras" -eq 1 ]]; then
+    install_optional_macos_casks
+  fi
+
+  link_files
+}
+
+main() {
+  local command="${1:-help}"
+  local install_extras=0
+  local list_target=""
+  shift || true
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --dry-run)
+        DRY_RUN=1
+        ;;
+      --force)
+        FORCE=1
+        ;;
+      --yes)
+        YES=1
+        ;;
+      --verbose)
+        VERBOSE=1
+        ;;
+      --extras)
+        install_extras=1
+        ;;
+      --os)
+        [[ $# -ge 2 ]] || die "--os requires a value"
+        list_target="$2"
+        shift
+        ;;
+      -h|--help)
+        usage
+        return 0
+        ;;
+      *)
+        die "Unknown option: $1"
+        ;;
+    esac
+    shift
+  done
+
+  case "$command" in
+    bootstrap)
+      bootstrap "$install_extras"
+      ;;
+    install)
+      install_system_packages
+      if [[ "$(detect_os)" == "macos" ]]; then
+        install_homebrew
+        install_brew_packages
+      fi
+      if [[ "$install_extras" -eq 1 ]]; then
+        install_optional_macos_casks
+      fi
+      ;;
+    list)
+      list_packages "$list_target"
+      ;;
+    link)
+      link_files
+      ;;
+    unlink)
+      unlink_files
+      ;;
+    doctor)
+      doctor
+      ;;
+    macos)
+      run_macos_defaults
+      ;;
+    ssh)
+      run_ssh_setup
+      ;;
+    help)
+      usage
+      ;;
+    *)
+      die "Unknown command: $command"
+      ;;
+  esac
+}
+
+main "$@"

@@ -1,0 +1,22 @@
+# Optional personal GUI apps.
+# Installed one-by-one so a bad cask name does not break the whole bootstrap.
+alt-tab
+cap
+discord
+font-monaspace
+mos
+orbstack
+pearcleaner
+the-unarchiver
+visual-studio-code
+vlc
+warp
+apidog
+microsoft-teams
+zalo
+zed@preview
+gonhanh
+ghostty
+snapzy
+brave-browser
+google-chrome

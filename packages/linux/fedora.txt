@@ -1,0 +1,15 @@
+# Core bootstrap packages for Fedora.
+# "Development Tools" is installed separately by the CLI.
+curl
+direnv
+file
+fzf
+gcc
+git
+make
+procps-ng
+ripgrep
+zoxide
+zsh
+zsh-autosuggestions
+zsh-syntax-highlighting

@@ -1,0 +1,29 @@
+[
+  {
+    "context": "Editor",
+    "use_key_equivalents": true,
+    "bindings": {
+      "cmd-;": "editor::ShowCompletions",
+      "cmd-shift-k": "editor::DeleteLine",
+      "shift-pageup": "editor::SelectToBeginning",
+      "shift-pagedown": "editor::SelectToEnd",
+      "cmd-pageup": "editor::PageUp",
+      "cmd-pagedown": "editor::PageDown",
+      "cmd-\\": "pane::SplitRight",
+      "cmd-delete": "editor::Delete",
+      "cmd-shift-r": "editor::Rename",
+      "cmd-l": "workspace::ToggleLeftDock",
+      "cmd-r": null
+    }
+  },
+  {
+    "context": "Workspace",
+    "use_key_equivalents": true,
+    "bindings": {
+      "cmd-?": null,
+      "cmd-b": "workspace::ToggleRightDock",
+      "cmd-l": "agent::ToggleFocus",
+      "cmd-shift-g": "git_panel::ToggleFocus"
+    }
+  }
+]

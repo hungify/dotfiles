@@ -1,0 +1,17 @@
+tap "jesseduffield/lazygit"
+tap "oven-sh/bun"
+tap "duongductrong/snapzy https://github.com/duongductrong/Snapzy"
+
+
+# Shared user-space CLI tools for macOS.
+brew "atuin"
+brew "fnm"
+brew "fzf"
+brew "jesseduffield/lazygit/lazygit"
+brew "mysql-client"
+brew "openjdk@17"
+brew "starship"
+brew "zoxide"
+brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"
+brew "oven-sh/bun/bun"

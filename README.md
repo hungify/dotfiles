@@ -1,41 +1,60 @@
 # dotfiles
 
-Before doing anything, make sure you know what you are doing! The settings applied by this repository are very personal and definitely not for everyone. I suggest creating your own set of dotfiles based on this repository.
+Personal dotfiles with one CLI, one `home/` tree, and a cross-platform bootstrap flow for macOS, Ubuntu, and Fedora.
 
-1. Install brew and stuff and follow the post-installection instructions.
+## Layout
 
-```bash
- /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
+- `bin/dotfiles`: the only CLI you need
+- `home/`: files symlinked into `$HOME`
+- `packages/linux/`: distro-native package lists for Ubuntu and Fedora
+- `packages/macos/`: Homebrew manifest and optional GUI casks for macOS
+- `scripts/`: OS-specific helpers such as macOS defaults and SSH setup
 
-2.Clone this repo to the hidden `.dotfile` directory in your home directory (git comes with brew).
+## Quick Start
 
-```bash
-git clone https://github.com/hungify/dotfiles ~/dotfiles
-```
-
-3.Install app and stuff.
+Clone the repo and run:
 
 ```bash
-cd ~/dotfiles/setup
-./app.sh
+./bin/dotfiles bootstrap --force
 ```
 
-4.SSH setup
+That flow:
+
+1. installs base system packages for the current OS
+2. on macOS only: installs Homebrew if missing
+3. on macOS only: installs packages from `packages/macos/Brewfile`
+4. symlinks everything from `home/` into `$HOME`
+
+If you also want optional personal macOS GUI apps:
 
 ```bash
-cd ~/dotfiles/setup
-./ssh.sh
+./bin/dotfiles bootstrap --force --extras
 ```
 
-5.Setup macOS.
+## Commands
 
 ```bash
-./os.sh
+./bin/dotfiles doctor
+./bin/dotfiles doctor --verbose
+./bin/dotfiles list
+./bin/dotfiles list --os ubuntu
+./bin/dotfiles install
+./bin/dotfiles link --force
+./bin/dotfiles unlink
+./bin/dotfiles macos
+./bin/dotfiles ssh
 ```
 
-6.Setup symlinks.
+## Notes
 
-```bash
-./symlink.sh
-```
+- Existing files are only replaced when you pass `--force`; replaced files are backed up under `${XDG_STATE_HOME:-~/.local/state}/dotfiles/backups/`.
+- macOS uses Homebrew for shared tooling; Ubuntu and Fedora stay native to `apt` and `dnf`.
+- `./bin/dotfiles list` prints the package set for the current OS; use `--os ubuntu`, `--os fedora`, `--os macos`, or `--os macos-casks` to inspect another target.
+- `./bin/dotfiles doctor` also reports missing declared packages on Ubuntu and Fedora; add `--verbose` to print each declared package with `ok` or `missing`.
+- `make list`, `make list OS=ubuntu`, and `make doctor-verbose` wrap the common CLI flows.
+- `home/.zshenv` stays cross-platform; macOS-only shell exports and PATH additions live in `home/.config/zsh/macos.zsh`.
+- `home/.config/zsh/linux.zsh` is the matching place for Linux-only shell tweaks, so platform-specific shell logic stays out of the shared base file.
+- `home/.zprofile` follows Homebrew's recommended `brew shellenv` flow on macOS across `/opt/homebrew` and `/usr/local`.
+- `home/.zshrc` keeps interactive setup in one file and sources local overrides from `~/.config/zsh/local.zsh` or `~/.zshrc.local` if present.
+- Linux shells load `zsh-autosuggestions` and `zsh-syntax-highlighting` from distro paths under `/usr/share/...` when those packages are installed.
+- `packages/macos/Brewfile` is macOS-only; `packages/macos/casks.txt` is best-effort for personal GUI apps that may fail or disappear over time.

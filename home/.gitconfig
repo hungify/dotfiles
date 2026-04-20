@@ -1,0 +1,76 @@
+[include]
+	path = ~/.gitconfig-personal
+
+[includeIf "gitdir:~/workspaces/"]
+	path = ~/workspaces/.gitconfig-work
+
+[color]
+	ui = true
+
+[init]
+	defaultBranch = main
+
+[push]
+	autoSetupRemote = true
+	default = current
+	followTags = true
+
+[pull]
+	rebase = false
+	ff = only
+
+[fetch]
+	prune = true
+	pruneTags = true
+
+[branch]
+	sort = -committerdate
+
+[rerere]
+	enabled = true
+	autoupdate = true
+
+[rebase]
+	autoStash = true
+	updateRefs = true
+
+[merge]
+	conflictStyle = zdiff3
+
+[diff]
+	colorMoved = default
+
+[safe]
+	directory = ~/workspaces/*
+	directory = ~/src/*
+	directory = ~/personal/*
+
+[core]
+	pager = delta
+	editor = code --wait
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	features = side-by-side line-numbers decorations hyperlinks
+	syntax-theme = default
+	navigate = true
+	dark = true
+
+[delta "side-by-side"]
+	side-by-side = true
+
+[delta "line-numbers"]
+	line-numbers = true
+
+[delta "decorations"]
+	commit-decoration-style = bold yellow box ul
+	file-style = bold blue
+	file-decoration-style = blue ul
+	hunk-header-style = file line-number syntax
+	hunk-header-decoration-style = blue box
+
+[delta "hyperlinks"]
+	hyperlinks = true
+	hyperlinks-file-link-format = "file://{path}"

@@ -1,0 +1,138 @@
+{
+  "inlay_hints": {
+    "show_other_hints": false,
+    "show_parameter_hints": false,
+    "show_type_hints": false,
+    "show_value_hints": false
+  },
+  "context_servers": {},
+  "agent": {
+    "default_model": {
+      "provider": "copilot_chat",
+      "model": "claude-sonnet-4.6"
+    },
+    "dock": "left",
+    "inline_assistant_model": {
+      "provider": "copilot_chat",
+      "model": "claude-sonnet-4"
+    }
+  },
+  "autosave": "on_window_change",
+  "format_on_save": "on",
+  "icon_theme": "Material Icon Theme",
+  "terminal": {
+    "cursor_shape": "bar"
+  },
+  "extend_comment_on_newline": false,
+  "theme": "Ayu Mirage",
+  "when_closing_with_no_tabs": "keep_window_open",
+  "buffer_font_family": "MonoLisa",
+  "ui_font_family": "MonoLisa",
+  "buffer_font_features": {
+    "calt": true,
+    "liga": true,
+    "dlig": true,
+    "ss01": true,
+    "ss02": true,
+    "ss03": true,
+    "ss04": true,
+    "ss05": true,
+    "ss06": true,
+    "ss07": true,
+    "ss08": true,
+    "ss09": true,
+    "ss10": true,
+    "ss11": true,
+    "ss12": true,
+    "ss13": true,
+    "ss14": true,
+    "ss15": true,
+    "ss16": true,
+    "ss17": true,
+    "ss18": true,
+    "ss19": true,
+    "ss20": true
+  },
+  "buffer_font_size": 14,
+  "ui_font_size": 17,
+  "file_finder": {
+    "modal_max_width": "medium"
+  },
+  "tabs": {
+    "show_diagnostics": "errors",
+    "file_icons": true,
+    "git_status": true
+  },
+  "indent_guides": {
+    "enabled": true,
+    "line_width": 1,
+    "active_line_width": 1,
+    "coloring": "indent_aware"
+  },
+  "gutter": {
+    "folds": true
+  },
+  "lsp": {
+    "tailwindcss-language-server": {
+      "settings": {
+        "classAttributes": ["class", "className", "ngClass", "styles"]
+      }
+    },
+    "rust-analyzer": {
+      "initialization_options": {
+        "checkOnSave": {
+          "command": "clippy"
+        }
+      }
+    }
+  },
+  "languages": {
+    "Rust": {
+      "enable_language_server": true,
+      "language_servers": ["rust-analyzer"]
+    }
+  },
+  "file_types": {
+    "Dockerfile": ["Dockerfile", "Dockerfile.*"],
+    "JSON": ["json", "jsonc", "*.code-snippets"]
+  },
+  "file_scan_exclusions": [
+    "**/.git",
+    "**/.svn",
+    "**/.hg",
+    "**/CVS",
+    "**/.DS_Store",
+    "**/Thumbs.db",
+    "**/.classpath",
+    "**/.settings",
+    "**/out",
+    "**/.husky",
+    "**/.turbo",
+    "**/.vscode-test",
+    "**/.next",
+    "**/.storybook",
+    "**/.tap",
+    "**/.nyc_output"
+  ],
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+  "git_panel": {
+    "tree_view": true,
+    "dock": "right"
+  },
+  "project_panel": {
+    "button": true,
+    "dock": "right",
+    "git_status": true,
+    "hide_root": true,
+    "sticky_scroll": true
+  },
+  "outline_panel": {
+    "dock": "right"
+  },
+  "collaboration_panel": {
+    "dock": "right"
+  }
+}

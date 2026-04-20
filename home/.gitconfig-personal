@@ -1,0 +1,9 @@
+[user]
+	email = nmhungify@gmail.com
+	name = hungify
+
+[github]
+	user = hungify
+
+[core]
+	sshCommand = "ssh -i ~/.ssh/personal"

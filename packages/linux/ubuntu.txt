@@ -1,0 +1,14 @@
+# Core bootstrap packages for Ubuntu/Debian.
+# Keep this list small and distro-native.
+build-essential
+curl
+direnv
+file
+fzf
+git
+procps
+ripgrep
+zoxide
+zsh
+zsh-autosuggestions
+zsh-syntax-highlighting
