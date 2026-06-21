@@ -1,0 +1,23 @@
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+
+export PAGER="${PAGER:-less}"
+export EDITOR="${EDITOR:-vi}"
+export VISUAL="${VISUAL:-$EDITOR}"
+
+typeset -U path PATH
+typeset -a extra_path
+
+# Homebrew shellenv (sets HOMEBREW_PREFIX, PATH, etc.)
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+
+  [[ -r "$XDG_CONFIG_HOME/zsh/macos.zsh" ]] && source "$XDG_CONFIG_HOME/zsh/macos.zsh"
+fi
+
+path=(
+  $extra_path
+  $path
+)

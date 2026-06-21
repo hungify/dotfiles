@@ -1,0 +1,22 @@
+node_modules/
+.DS_Store
+.DS_Store?
+
+# macOS
+
+.\_\*
+.Spotlight-V100
+.Trashes
+
+# Secrets - never commit
+
+.config/age/
+
+# Machine-specific
+
+dot_config/zsh/local.zsh
+
+# Reference data only, not a home-directory dotfile
+
+packages/
+README.md

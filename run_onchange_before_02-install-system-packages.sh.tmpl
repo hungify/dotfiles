@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# mise config hash: {{ include "dot_config/mise/config.toml" | sha256sum }}
+set -euo pipefail
+
+# Homebrew binaries installed earlier in this bootstrap (00/01) may not be on
+# PATH yet in this script's process.
+[[ -x /opt/homebrew/bin/brew ]] && export PATH="/opt/homebrew/bin:$PATH"
+
+# if ! xcode-select -p >/dev/null 2>&1; then
+#   echo "Xcode Command Line Tools not installed. Run: xcode-select --install"
+# else
+#   echo "Xcode Command Line Tools already installed"
+# fi
+
+if command -v uv >/dev/null 2>&1; then
+  if ! command -v claude-swap >/dev/null 2>&1; then
+    echo "Installing claude-swap..."
+    uv tool install claude-swap
+  else
+    echo "claude-swap already installed"
+  fi
+else
+  echo "uv is not installed; skipping claude-swap (installed via the Brewfile)" >&2
+fi
+
+if command -v mise >/dev/null 2>&1; then
+  echo "Installing mise-managed tools (node, etc.)..."
+  mise install
+
+  if ! mise exec node -- command -v is >/dev/null 2>&1; then
+    echo "Installing inshellisense via mise's node..."
+    mise exec node -- npm install -g @microsoft/inshellisense
+  else
+    echo "inshellisense already installed"
+  fi
+
+  if ! mise exec node -- command -v ccstatusline >/dev/null 2>&1; then
+    echo "Installing ccstatusline via mise's node..."
+    mise exec node -- npm install -g ccstatusline
+  else
+    echo "ccstatusline already installed"
+  fi
+else
+  echo "mise is not installed; skipping mise-managed tools (installed via the Brewfile)" >&2
+fi

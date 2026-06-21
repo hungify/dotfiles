@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# casks.txt hash: {{ include "packages/macos/casks.txt" | sha256sum }}
+set -uo pipefail
+
+[[ "$(uname -s)" == "Darwin" ]] || exit 0
+
+export HOMEBREW_NO_ANALYTICS=1
+export HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_NO_ASK=1
+
+brew_bin() {
+  if command -v brew >/dev/null 2>&1; then
+    command -v brew
+    return
+  fi
+
+  [[ -x /opt/homebrew/bin/brew ]] && printf '%s\n' /opt/homebrew/bin/brew && return
+
+  return 1
+}
+
+brew="$(brew_bin)" || { echo "Homebrew is not installed" >&2; exit 1; }
+
+CASKS_FILE="${HOME}/.local/share/chezmoi/packages/macos/casks.txt"
+[[ -f "$CASKS_FILE" ]] || exit 0
+
+echo "Installing optional GUI apps from casks.txt..."
+
+# Read the casks file on fd 3, not fd 0/stdin. If the loop body read the file
+# via `done < "$CASKS_FILE"` on fd 0, any interactive prompt inside
+# `brew install --cask` (Rosetta, license, sudo password) would read from that
+# same fd, silently draining the rest of the casks list and skipping
+# everything after it. Keeping it on fd 3 leaves fd 0 free for such prompts.
+while IFS= read -r line <&3 || [[ -n "$line" ]]; do
+  cask="${line%%#*}"
+  cask="$(echo "$cask" | xargs)"
+  [[ -z "$cask" ]] && continue
+
+  if "$brew" list --cask "$cask" >/dev/null 2>&1; then
+    echo "  $cask already installed"
+    continue
+  fi
+
+  echo "  Installing $cask..."
+  "$brew" install --cask "$cask" || echo "  Failed to install $cask (skipping)" >&2
+done 3< "$CASKS_FILE"

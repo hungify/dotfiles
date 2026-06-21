@@ -1,0 +1,4 @@
+# Some tools (e.g. herdr) export ZDOTDIR for spawned shells, which makes zsh
+# look for its rc file here instead of ~/.zshrc. Redirect to the real one so
+# those shells still pick up the full config.
+[[ -r "$HOME/.zshrc" ]] && source "$HOME/.zshrc"

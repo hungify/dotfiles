@@ -1,0 +1,3 @@
+HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}/zsh/history"
+HISTSIZE=10000
+SAVEHIST=10000
