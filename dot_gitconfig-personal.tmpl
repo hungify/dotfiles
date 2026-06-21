@@ -1,0 +1,11 @@
+{{- if .git_email }}
+[user]
+	email = {{ .git_email }}
+	name = {{ .git_name }}
+
+[github]
+	user = {{ .github_user }}
+
+[core]
+	sshCommand = "ssh -i ~/.ssh/{{ .git_ssh_key | default "personal" }}"
+{{ end -}}

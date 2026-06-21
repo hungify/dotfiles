@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Brewfile hash: {{ include "packages/macos/Brewfile" | sha256sum }}
+set -euo pipefail
+
+[[ "$(uname -s)" == "Darwin" ]] || exit 0
+
+export HOMEBREW_NO_ANALYTICS=1
+export HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_NO_ASK=1
+
+brew_bin() {
+  if command -v brew >/dev/null 2>&1; then
+    command -v brew
+    return
+  fi
+
+  [[ -x /opt/homebrew/bin/brew ]] && printf '%s\n' /opt/homebrew/bin/brew && return
+
+  return 1
+}
+
+brew="$(brew_bin)" || { echo "Homebrew is not installed" >&2; exit 1; }
+
+BREWFILE="${HOME}/.local/share/chezmoi/packages/macos/Brewfile"
+
+# Homebrew 6+ requires explicit trust for non-official taps before their
+# formulae can be installed. Trust the third-party taps used in the Brewfile
+# so `brew bundle` doesn't abort on a fresh machine.
+for tap in can1357/tap jesseduffield/lazydocker jesseduffield/lazygit oven-sh/bun stablyai/orca; do
+  "$brew" trust --tap "$tap" 2>/dev/null || true
+done
+
+echo "Installing Brewfile packages..."
+"$brew" bundle --file "$BREWFILE"
