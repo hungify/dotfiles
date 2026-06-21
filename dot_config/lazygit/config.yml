@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
+os:
+  editPreset: "vscode"
+
+gui:
+  border: rounded
+  theme:
+    activeBorderColor:
+      - "#5ef1ff"
+      - bold
+    inactiveBorderColor:
+      - "#7b8496"
+    searchingActiveBorderColor:
+      - "#ff5ef1"
+    optionsTextColor:
+      - "#ffffff"
+    selectedLineBgColor:
+      - "#3c4048"
+    cherryPickedCommitBgColor:
+      - "#3c4048"
+    cherryPickedCommitFgColor:
+      - "#ff5ea0"
+    unstagedChangesColor:
+      - "#ffbd5e"
+    defaultFgColor:
+      - "#ffffff"
+git:
+  diffRenderers:
+    - colorArg: always
+      command: delta --dark --syntax-theme="Dracula" --paging=never --line-numbers --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
+
+customCommands:
+  - key: "<meta+c>"
+    context: "global"
+    command: 'code "$(git rev-parse --show-toplevel)"'
+    output: "none"
+    description: "Open repo root in VS Code"
+  - key: "<meta+z>"
+    context: "global"
+    command: 'zed "$(git rev-parse --show-toplevel)"'
+    output: "none"
+    description: "Open repo root in Zed"
+  - key: "<meta+g>"
+    context: "global"
+    command: 'open -a Ghostty "$(git rev-parse --show-toplevel)"'
+    output: "none"
+    description: "Open repo root in Ghostty tab"

@@ -1,0 +1,2 @@
+setopt auto_cd interactive_comments no_beep extended_glob
+setopt extended_history hist_ignore_all_dups hist_ignore_space hist_save_no_dups inc_append_history share_history

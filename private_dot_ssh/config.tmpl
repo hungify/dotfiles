@@ -1,0 +1,9 @@
+{{- range .vps_hosts }}
+{{- if .hostname }}
+Host {{ .name }}
+    HostName {{ .hostname }}
+    Port {{ .port | default "22" }}
+    User {{ .user | default "ubuntu" }}
+    IdentityFile ~/.ssh/{{ .identity_file | default "id_ed25519" }}
+{{ end -}}
+{{ end -}}
