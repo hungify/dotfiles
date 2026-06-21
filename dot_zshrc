@@ -1,0 +1,15 @@
+[[ -o interactive ]] || return
+
+ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
+
+for f in \
+  "$ZDOTDIR/01-zinit.zsh" \
+  "$ZDOTDIR/02-options.zsh" \
+  "$ZDOTDIR/03-history.zsh" \
+  "$ZDOTDIR/04-completion.zsh" \
+  "$ZDOTDIR/05-aliases.zsh" \
+  "$ZDOTDIR/06-tools.zsh" \
+  "$ZDOTDIR/local.zsh"
+do
+  [[ -r "$f" ]] && source "$f"
+done

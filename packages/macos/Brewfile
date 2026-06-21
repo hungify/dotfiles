@@ -1,0 +1,9 @@
+tap "jesseduffield/lazygit"
+
+# Shared user-space CLI tools for macOS.
+brew "atuin"
+brew "fzf"
+brew "jesseduffield/lazygit/lazygit"
+brew "openjdk@17"
+brew "starship"
+brew "zoxide"
