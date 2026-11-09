@@ -8,6 +8,7 @@ alias ld='lazydocker'
 alias cc='claude --permission-mode bypassPermissions'
 alias cx='codex --dangerously-bypass-approvals-and-sandbox'
 alias hd="herdr"
+alias ag='agy --dangerously-skip-permissions'
 
 if command -v bat >/dev/null 2>&1; then
   alias cat='bat --paging=never'
