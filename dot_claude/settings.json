@@ -63,16 +63,20 @@
 	},
 	"statusLine": {
 		"type": "command",
-		"command": "ccstatusline",
+		"command": "~/.config/claude/statusline.sh",
 		"padding": 0,
 		"refreshInterval": 10
 	},
 	"modelSettings": {
 		"claude-opus-5-5": {
-			"effortLevel": "high"
+			"effortLevel": "medium"
 		}
 	},
 	"skipDangerousModePermissionPrompt": true,
+	"sandbox": {
+		"enabled": true,
+		"autoAllowBashIfSandboxed": true
+	},
 	"theme": "dark",
 	"agentPushNotifEnabled": true,
 	"includeCoAuthoredBy": false

@@ -50,6 +50,22 @@ chezmoi doctor    # diagnose issues
 chezmoi edit <file>  # edit a managed file
 ```
 
+## AI CLI status lines & defaults
+
+Unified 2-row Dark Tokyo Night status line and safe OS-sandbox defaults across **Antigravity CLI (`agy`)**, **Codex CLI (`codex`)**, and **Claude Code (`claude`)**:
+
+```text
+Gemini 4 Hydrogen (Medium) | auto | ~/dotfiles | main* | +12 −3 | PR #42 (open) | 1 subagent
+Context: ▰▰▰▱▱▱▱▱▱▱▱▱ 220K/1M (22%) | 5h: 72% (1h30m) | wk: 65% (1d9h)
+```
+
+- **Row 1:**
+  - *AI & safety (left):* Model (with reasoning effort), active mode / permission / tier badge (`auto`, `auto-approve`, `fast`, `turbo`, `bypass`).
+  - *Workspace & Git (middle):* Shortened CWD (`depth=2`), Git branch (`*`, `REBASE`/`MERGING`, `⇡a ⇣b`), worktree (`wt:`), diff stats (`+a −r`), and clickable PR hyperlink (`PR #<num> (<state>)`, state colored: open/approved green, changes_requested yellow, closed red, merged purple).
+  - *Dynamic state (right):* Running subagents/tasks, named agent, and Vim mode (kept at the far right so `CWD` and `branch` never shift horizontally).
+- **Row 2:** 12-cell geometric `Context` bar (`▰`/`▱`), used `5h` and `wk` (weekly) (plus `argon` when active in `agy`) quota % (same direction as context: higher = worse) with inline reset timers shown when `>= 60%` used.
+- **Defaults:** OS terminal sandbox enabled across all three CLIs (`enableTerminalSandbox: true` in `agy`, `workspace-write` + `Approve for me` in `codex`, `sandbox.enabled: true` + `permissions.deny` + `.env` hooks in `claude`). Chezmoi `run_onchange_after_*` scripts upsert shared defaults without overwriting machine-local state (`trustedWorkspaces`, `projects`, active model).
+
 ## Layout
 
 ```txt
@@ -62,7 +78,10 @@ dotfiles/
 │       ├── executable_protect-env-files.sh  # blocks Read/Edit/Write on real .env files
 │       └── executable_protect-env-bash.sh   # blocks Bash commands touching a .env file
 ├── dot_config/
-│   ├── ghostty/                    # Ghostty terminal + shaders
+│   ├── antigravity/executable_statusline.sh  # Antigravity CLI 2-row status line
+│   ├── claude/executable_statusline.sh       # Claude Code 2-row status line
+│   ├── codex/statusline.py                   # Codex CLI MCP status line provider
+│   ├── ghostty/                              # Ghostty terminal + shaders
 │   ├── zed/                        # Zed editor settings
 │   ├── starship.toml               # Starship prompt
 │   ├── lazygit/                    # Lazygit config
@@ -86,7 +105,8 @@ dotfiles/
 │   ├── Brewfile                    # Brew packages
 │   └── casks.txt                   # Optional casks
 ├── run_once_before_00-install-homebrew.sh              # One-time: Homebrew + Rosetta 2
-└── run_onchange_before_{01,02,03}-*.sh.tmpl            # Re-run when their source file's content changes
+├── run_onchange_before_{01,02,03}-*.sh.tmpl            # Re-run when their source file's content changes
+└── run_onchange_after_{04,05}-*.sh.tmpl                # Upsert Codex & Antigravity CLI defaults
 ```
 
 ## Notes

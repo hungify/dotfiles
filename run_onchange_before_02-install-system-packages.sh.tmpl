@@ -33,13 +33,6 @@ if command -v mise >/dev/null 2>&1; then
   else
     echo "inshellisense already installed"
   fi
-
-  if ! mise exec node -- command -v ccstatusline >/dev/null 2>&1; then
-    echo "Installing ccstatusline via mise's node..."
-    mise exec node -- npm install -g ccstatusline
-  else
-    echo "ccstatusline already installed"
-  fi
 else
   echo "mise is not installed; skipping mise-managed tools (installed via the Brewfile)" >&2
 fi

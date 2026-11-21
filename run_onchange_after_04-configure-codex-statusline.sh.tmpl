@@ -1,0 +1,15 @@
+#!/bin/sh
+set -eu
+
+codex="$(command -v codex || true)"
+if [ -z "$codex" ]; then
+    for candidate in /opt/homebrew/bin/codex /usr/local/bin/codex; do
+        if [ -x "$candidate" ]; then
+            codex="$candidate"
+            break
+        fi
+    done
+fi
+[ -n "$codex" ] || exit 0
+
+/usr/bin/python3 {{ joinPath .chezmoi.homeDir ".config/codex/statusline.py" | quote }} --install "$codex"

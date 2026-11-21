@@ -5,10 +5,14 @@ alias mv='mv -iv'
 alias cp='cp -riv'
 alias mkdir='mkdir -vp'
 alias ld='lazydocker'
-alias cc='claude --permission-mode bypassPermissions'
-alias cx='codex --dangerously-bypass-approvals-and-sandbox'
+alias cc='claude --permission-mode auto'
+alias cx='codex --approve-for-me'
+# Omit --mode: agy starts in auto mode by default when agentMode is unset (--mode=auto races auth and falls back to default)
+alias ag='agy'
+alias ccy='claude --permission-mode bypassPermissions'
+alias cxy='codex --dangerously-bypass-approvals-and-sandbox'
+alias agyy='agy --dangerously-skip-permissions'
 alias hd="herdr"
-alias ag='agy --dangerously-skip-permissions'
 
 if command -v bat >/dev/null 2>&1; then
   alias cat='bat --paging=never'

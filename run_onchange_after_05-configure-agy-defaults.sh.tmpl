@@ -1,0 +1,56 @@
+#!/bin/sh
+set -eu
+
+SETTINGS_FILE={{ joinPath .chezmoi.homeDir ".gemini/antigravity-cli/settings.json" | quote }}
+mkdir -p "$(dirname "$SETTINGS_FILE")"
+[ -f "$SETTINGS_FILE" ] || printf '{}\n' > "$SETTINGS_FILE"
+
+/usr/bin/python3 - "$SETTINGS_FILE" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+try:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        data = {}
+except Exception:
+    data = {}
+
+# Best-practice global defaults (preserve machine-local model & trustedWorkspaces)
+# Omit agentMode so agy starts in auto mode once auth/experiments load (v1.5.7+)
+data.pop("agentMode", None)
+data.setdefault("toolPermission", "proceed-in-sandbox")
+data["allowNonWorkspaceAccess"] = False
+data["enableTerminalSandbox"] = True
+data["colorScheme"] = "tokyo night"
+# Pin prompt + status line to the bottom (full screen) instead of inline scrollback
+data["altScreenMode"] = "always"
+data.setdefault("notifications", True)
+data.setdefault("pickerGrouping", "grouped")
+data["statusLine"] = {
+    "type": "command",
+    "command": "~/.config/antigravity/statusline.sh",
+    "enabled": True,
+}
+
+ssh_dir = {{ joinPath .chezmoi.homeDir ".ssh" | quote }}
+perms = data.setdefault("permissions", {})
+if isinstance(perms, dict):
+    deny = perms.setdefault("deny", [])
+    if isinstance(deny, list):
+        # Remove broken tilde rule (sandbox requires absolute paths in write_file rules)
+        if "write_file(~/.ssh)" in deny:
+            deny.remove("write_file(~/.ssh)")
+        for rule in (
+            "command(rm -rf /)",
+            "command(rm -rf /*)",
+            "command(sudo)",
+            f"write_file({ssh_dir})",
+        ):
+            if rule not in deny:
+                deny.append(rule)
+
+path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+PY
