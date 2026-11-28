@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Generate per-account Git config from local chezmoi data; account data stays untracked.
+# accounts hash: {{ dig "git" "accounts" dict . | toJson | sha256sum }}
+set -euo pipefail
+
+dir="$HOME/.config/git/accounts"
+mkdir -p "$dir"
+{{- range $name, $account := dig "git" "accounts" dict . }}
+{{- if and (index $account "email") (index $account "name") }}
+cat > "$dir/{{ $name }}.gitconfig" <<'GIT_ACCOUNT_EOF'
+{{ template "git-account" $account }}
+GIT_ACCOUNT_EOF
+{{- end }}
+{{- end }}

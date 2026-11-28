@@ -18,9 +18,16 @@ sh -c '
 ' && sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply --source "$HOME/dotfiles" https://github.com/hungify/dotfiles.git
 ```
 
+You do not need to clone the repository separately: `chezmoi init --apply`
+downloads it from the HTTPS URL above and applies it in the same run.
+
 `chezmoi init` itself shells out to the system `git` to clone this repo — and on a brand-new Mac, `git` is just an `xcode-select` stub that pops a blocking GUI installer and exits non-zero instead of waiting, so the clone fails before any script in this repo gets a chance to run. The first part of the command above installs Command Line Tools non-interactively via `softwareupdate` (no GUI dialog) so real `git` exists before chezmoi ever calls it — it'll ask for your `sudo` password once, then run unattended.
 
-A brand-new Mac has no SSH key registered with GitHub yet, so the initial clone must use HTTPS, not `git@github.com:...`. Once an SSH key is restored to `~/.ssh/` and added to GitHub, git will use SSH for this repo's own remote via `dot_gitconfig`'s `sshCommand` (day-to-day pulls/pushes), but the bootstrap clone itself needs HTTPS.
+A brand-new Mac has no SSH key registered with GitHub yet, so the initial clone uses HTTPS. Adding a key later does not change that remote URL. To switch this checkout to SSH after registering the key, run `git -C "$HOME/dotfiles" remote set-url origin git@github.com:hungify/dotfiles.git`; the default profile then supplies its SSH key for Git operations.
+
+On first initialization, chezmoi asks for the personal Git name, email, GitHub
+username, and SSH key filename. These required values are saved in the local
+chezmoi config before dotfiles are applied; later `chezmoi init` runs reuse them.
 
 This will:
 
@@ -31,7 +38,7 @@ This will:
 - Install Brewfile packages
 - Install optional GUI apps from `casks.txt` (one by one, a bad name won't break the rest)
 - Apply macOS defaults
-- Symlink all dotfiles to `$HOME`, using the Git name/email/GitHub username/SSH key hardcoded in `.chezmoi.toml.tmpl` (edit that file directly if you fork this for someone else — it does not prompt)
+- Symlink all dotfiles to `$HOME`; the local chezmoi config contains Git account profiles
 - Install Zinit + plugins (zsh-autosuggestions, zsh-syntax-highlighting, fzf-tab)
 
 First shell launch: Zinit auto-clones plugins on first `zsh` launch. Subsequent launches use the cached version.
@@ -70,7 +77,7 @@ Context: ▰▰▰▱▱▱▱▱▱▱▱▱ 220K/1M (22%) | 5h: 72% (1h30m) | 
 
 ```txt
 dotfiles/
-├── .chezmoi.toml.tmpl              # Prompt data (name, email, VPS hosts)
+├── .chezmoi.toml.tmpl              # Required first-run prompts for the personal Git profile
 ├── .chezmoiignore                  # Files chezmoi should ignore
 ├── dot_claude/
 │   ├── settings.json               # Claude Code: statusLine + permission guardrails
@@ -96,8 +103,9 @@ dotfiles/
 │       ├── 06-tools.zsh            # Tool init (mise, zoxide, atuin, fzf, starship, inshellisense)
 │       ├── macos.zsh               # macOS PATH + env vars
 │       └── local.zsh               # Machine-specific (not tracked)
-├── dot_gitconfig                   # Git config
-├── dot_gitconfig-personal.tmpl     # Git identity (from .chezmoi data)
+├── dot_gitconfig.tmpl              # Git config + per-directory account includes
+├── .chezmoitemplates/git-account  # Shared per-account Git config template
+├── run_onchange_after_15-git-accounts.sh.tmpl # Generates local account configs
 ├── dot_library/                    # macOS keybindings
 ├── dot_zshenv                      # XDG, PATH, Homebrew shellenv
 ├── dot_zshrc                       # Entry point → sources zsh/ files
@@ -118,3 +126,66 @@ dotfiles/
 - `.chezmoiignore` excludes node_modules, secrets, and build artifacts
 - `dot_config/zsh/local.zsh` is for machine-specific overrides (not tracked in git)
 - Plugins (zsh-autosuggestions, zsh-syntax-highlighting, fzf-tab) are managed by Zinit
+
+## Multiple GitHub accounts
+
+All accounts, including personal, use the same profile pattern. Chezmoi
+generates `~/.config/git/accounts/<account>.gitconfig` from the account tables
+in the local `~/.config/chezmoi/chezmoi.toml`. The `default` account is used
+outside the configured directories; each account's `dir` selects repositories
+that should use it. Each profile can pin its own SSH key.
+
+On first init, the config template requires the personal name, email, GitHub
+username, and SSH key filename. It stores them under the `personal` profile in
+the local config. Existing flat personal settings are migrated automatically;
+to change the identity later, edit its local table:
+
+```toml
+[data.git]
+default = "personal"
+
+[data.git.accounts.personal]
+name = "Your Name"
+email = "you@example.com"
+github_user = "your-personal-user"
+ssh_key = "personal"
+```
+
+Create a separate key for each GitHub account and add the matching public key to
+that account in GitHub → Settings → SSH and GPG keys:
+
+```sh
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+Add another account to `~/.config/chezmoi/chezmoi.toml`:
+
+```toml
+[data.git.accounts.work]
+dir = "~/work/"                 # repositories under this directory use this profile
+name = "Your Name"
+email = "work@example.com"
+github_user = "your-work-user"
+ssh_key = "id_ed25519_work"    # private key filename in ~/.ssh
+```
+
+Then create the directory and apply the dotfiles:
+
+```sh
+mkdir -p ~/work
+chezmoi apply
+```
+
+Repositories outside configured account directories use the profile named by
+`[data.git].default`. For any repository, confirm the selected identity and key
+from inside its directory:
+
+```sh
+git config --show-origin --get user.email
+git config --get core.sshCommand
+ssh -o IdentitiesOnly=yes -i ~/.ssh/id_ed25519_work -T git@github.com
+```
+
+For another account, create another key and add another
+`[data.git.accounts.<name>]` section with a distinct `dir`. Run `chezmoi apply`
+after changing account data to regenerate the Git config files.

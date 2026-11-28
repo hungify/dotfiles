@@ -1,7 +1,44 @@
-sourceDir = "{{ .chezmoi.homeDir }}/dotfiles"
+{{- $accounts := dig "git" "accounts" dict . -}}
+{{- if not (hasKey $accounts "personal") -}}
+{{- $name := promptStringOnce . "git_name" "Personal Git name" -}}
+{{- $email := promptStringOnce . "git_email" "Personal Git email" -}}
+{{- $githubUser := promptStringOnce . "github_user" "Personal GitHub username" -}}
+{{- $sshKey := promptStringOnce . "git_ssh_key" "Personal SSH key filename in ~/.ssh" -}}
+{{- if not $name }}{{ fail "Personal Git name is required" }}{{ end -}}
+{{- if not $email }}{{ fail "Personal Git email is required" }}{{ end -}}
+{{- if not $githubUser }}{{ fail "Personal GitHub username is required" }}{{ end -}}
+{{- if not $sshKey }}{{ fail "Personal SSH key filename is required" }}{{ end -}}
+{{- $personal := dict "name" $name "email" $email "github_user" $githubUser "ssh_key" $sshKey -}}
+{{- $_ := set $accounts "personal" $personal -}}
+{{- else -}}
+{{- $personal := index $accounts "personal" -}}
+{{- range $field := list "name" "email" "github_user" "ssh_key" -}}
+{{- if not (index $personal $field) }}{{ fail (printf "data.git.accounts.personal.%s is required" $field) }}{{ end -}}
+{{- end -}}
+{{- end -}}
+{{- $default := dig "git" "default" "personal" . -}}
 
-[data]
-git_name = "hungify"
-git_email = "nmhungify@gmail.com"
-github_user = "hungify"
-git_ssh_key = "personal"
+sourceDir = {{ printf "%s/dotfiles" .chezmoi.homeDir | quote }}
+
+[data.git]
+default = {{ $default | quote }}
+
+{{ range $name, $account := $accounts }}
+[data.git.accounts.{{ $name | quote }}]
+{{- with index $account "dir" }}
+dir = {{ . | quote }}
+{{- end }}
+{{- with index $account "name" }}
+name = {{ . | quote }}
+{{- end }}
+{{- with index $account "email" }}
+email = {{ . | quote }}
+{{- end }}
+{{- with index $account "github_user" }}
+github_user = {{ . | quote }}
+{{- end }}
+{{- with index $account "ssh_key" }}
+ssh_key = {{ . | quote }}
+{{- end }}
+
+{{ end }}

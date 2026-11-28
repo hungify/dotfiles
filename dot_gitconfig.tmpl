@@ -1,8 +1,5 @@
 [include]
-	path = ~/.gitconfig-personal
-
-[includeIf "gitdir:~/workspaces/"]
-	path = ~/workspaces/.gitconfig-work
+	path = ~/.config/git/accounts/{{ dig "git" "default" "personal" . }}.gitconfig
 
 [color]
 	ui = true
@@ -40,11 +37,6 @@
 [diff]
 	colorMoved = default
 
-[safe]
-	directory = ~/workspaces/*
-	directory = ~/src/*
-	directory = ~/personal/*
-
 [core]
 	pager = delta
 	editor = zed --wait
@@ -74,3 +66,12 @@
 [delta "hyperlinks"]
 	hyperlinks = true
 	hyperlinks-file-link-format = "file://{path}"
+
+# Per-directory account overrides must stay at the end: Git uses the last value it reads.
+{{- range $name, $account := dig "git" "accounts" dict . }}
+{{- if and (index $account "dir") (index $account "email") }}
+
+[includeIf "gitdir:{{ $account.dir }}"]
+	path = ~/.config/git/accounts/{{ $name }}.gitconfig
+{{- end }}
+{{- end }}

@@ -1,0 +1,17 @@
+{{- /* Context: one local account map (see [data.git.accounts.*] in README) */ -}}
+{{- if index . "email" }}
+[user]
+	name = {{ index . "name" | quote }}
+	email = {{ index . "email" | quote }}
+{{- with index . "github_user" }}
+
+[github]
+	user = {{ . | quote }}
+{{- end }}
+{{- with index . "ssh_key" }}
+
+[core]
+	# Use only this profile's key even when ssh-agent has other identities loaded.
+	sshCommand = ssh -i ~/.ssh/{{ . }} -o IdentitiesOnly=yes
+{{- end }}
+{{- end }}
